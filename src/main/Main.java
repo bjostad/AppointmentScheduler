@@ -12,7 +12,7 @@ public class Main extends Application {
     public void start(Stage mainStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/view/Login.fxml"));
         mainStage.setTitle("Appointment Scheduler");
-        mainStage.setScene(new Scene(root, 1400, 800));
+        mainStage.setScene(new Scene(root, 350, 350));
         mainStage.show();
     }
 
