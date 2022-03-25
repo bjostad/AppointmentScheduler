@@ -19,16 +19,27 @@ public class DBConnection {
      * @throws Exception
      */
     public static void makeConnection() throws ClassNotFoundException, SQLException, Exception {
-        conn=(Connection) DriverManager.getConnection(DB_URL,username,password);
+        try{
+            conn=(Connection) DriverManager.getConnection(DB_URL,username,password);
+            System.out.println(conn);
+        } catch (SQLException e) {
+            System.out.println("DB connection issue: "+ e);
+        }
     }
 
     /**
-     * close mySQL database connection
+     * Close mySQL database connection
      * @throws ClassNotFoundException
      * @throws SQLException
      * @throws Exception
      */
     public static void closeConnection() throws ClassNotFoundException, SQLException, Exception{
-        conn.close();
+        try{
+            conn.close();
+            System.out.println("Connection Closed");
+        } catch (SQLException e) {
+            System.out.println("DB closure issue: "+ e);
+        }
+
     }
 }

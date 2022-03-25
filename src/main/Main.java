@@ -1,5 +1,6 @@
 package main;
 
+import DAO.DBConnection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,6 +15,9 @@ public class Main extends Application {
         mainStage.setTitle("Appointment Scheduler");
         mainStage.setScene(new Scene(root, 350, 350));
         mainStage.show();
+
+        DBConnection.makeConnection();
+        DBConnection.closeConnection();
     }
 
     public static void main(String[] args){
