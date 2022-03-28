@@ -3,27 +3,58 @@ package controller;
 import DAO.UserDAOImpl;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.User;
 
+import java.net.URL;
 import java.sql.SQLException;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
-public class Login {
+public class Login implements Initializable {
     @FXML
     private TextField usernameText;
     @FXML
     private TextField passwordText;
+    @FXML
+    private Label timeZoneLabel;
+    @FXML
+    private Label timeZoneSelectionLabel;
+    @FXML
+    private Button logInButton;
+    @FXML
+    private Button exitButton;
+    @FXML
+    private Label usernameLabel;
+    @FXML
+    private Label passwordLabel;
+    @FXML
+    private Label titleLabel;
 
+    private ResourceBundle language = ResourceBundle.getBundle("resources/language",Locale.getDefault());
+
+
+    /**
+     * Confirm user wishes to exit and exit program
+     * @param actionEvent
+     */
     @FXML
     private void onExitButton(ActionEvent actionEvent) {
-        if (Util.Alert.confirm("Close","Close Application","Are you sure you want to close the application?")) {
+        if (util.Alert.confirm(language.getString("exitTitle"),language.getString("exitHeader"),language.getString("exitContent"))) {
             System.exit(0);
         }
     }
 
+    /**
+     * Check username and password and load application
+     * @param actionEvent
+     * @throws SQLException
+     * @throws Exception
+     */
     @FXML
     private void onLogInButton(ActionEvent actionEvent) throws SQLException, Exception {
         String loginUserPassword = null;
@@ -35,11 +66,21 @@ public class Login {
             if(passwordText.getText().equals(loginUserPassword)){
 
             } else {
-                Util.Alert.warn("Invalid Login","Invalid Login","Username or password incorrect.");
+                util.Alert.warn(language.getString("loginTitle"),language.getString("loginHeader"),language.getString("loginContent"));
             }
         } catch (SQLException e) {
 
         }
+    }
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        timeZoneSelectionLabel.setText(ZoneId.systemDefault().toString());
+        timeZoneLabel.setText(language.getString("timeZoneLabel"));
+        logInButton.setText(language.getString("logInButton"));
+        exitButton.setText(language.getString("exitButton"));
+        usernameLabel.setText(language.getString("usernameLabel"));
+        passwordLabel.setText(language.getString("passwordLabel"));
+        titleLabel.setText(language.getString("titleLabel"));
     }
 }
