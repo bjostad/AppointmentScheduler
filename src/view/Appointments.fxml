@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="756.0" prefWidth="1319.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Appointments">
+    <children>
+        <Button fx:id="newAppointmentButton" layoutX="993.0" layoutY="17.0" mnemonicParsing="false" onAction="#onNewAppointmentButton" prefHeight="26.0" prefWidth="74.0" text="New" />
+        <Button fx:id="editAppointmentButton" layoutX="1093.0" layoutY="17.0" mnemonicParsing="false" onAction="#onEditAppointmentButton" prefHeight="26.0" prefWidth="74.0" text="Edit" />
+        <Button fx:id="deleteButton" layoutX="1192.0" layoutY="17.0" mnemonicParsing="false" onAction="#onDeleteButton" prefHeight="26.0" prefWidth="74.0" text="Delete" />
+        <TableView fx:id="appointmentTable" layoutX="31.0" layoutY="54.0" prefHeight="555.0" prefWidth="1251.0">
+            <columns>
+                <TableColumn fx:id="appointmentIdColumn" prefWidth="61.5999755859375" text="ID" />
+                <TableColumn fx:id="startDateTimeColumn" prefWidth="108.0" text="Start Time/Date" />
+                <TableColumn fx:id="endDateTimeColumn" prefWidth="97.60003662109375" text="End Time/Date" />
+                <TableColumn fx:id="titleColumn" prefWidth="126.0" text="Title" />
+                <TableColumn fx:id="descriptionColumn" prefWidth="155.0" text="Description" />
+                <TableColumn fx:id="locationColumn" prefWidth="152.0" text="Location" />
+                <TableColumn fx:id="contactColumn" prefWidth="293.0" text="Contact" />
+                <TableColumn fx:id="typeColumn" prefWidth="138.0" text="Type" />
+                <TableColumn fx:id="customerIdColumn" prefWidth="110.0" text="Customer ID" />
+            </columns>
+        </TableView>
+        <Button fx:id="customersButton" layoutX="586.0" layoutY="700.0" mnemonicParsing="false" onAction="#onCustomerButton" prefHeight="26.0" prefWidth="74.0" text="Customers" />
+        <Button fx:id="reportsButton" layoutX="687.0" layoutY="700.0" mnemonicParsing="false" onAction="#onReportsPage" prefHeight="26.0" prefWidth="74.0" text="Reports" />
+      <Label layoutX="49.0" layoutY="14.0" text="Appointment Scheduler">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+    </children>
+</AnchorPane>

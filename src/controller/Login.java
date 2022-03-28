@@ -3,12 +3,17 @@ package controller;
 import DAO.UserDAOImpl;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import model.User;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.ZoneId;
@@ -16,6 +21,10 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class Login implements Initializable {
+
+    Stage stage;
+    Parent scene;
+
     @FXML
     private TextField usernameText;
     @FXML
@@ -64,13 +73,20 @@ public class Login implements Initializable {
                 loginUserPassword = loginUser.getPassword();
             }
             if(passwordText.getText().equals(loginUserPassword)){
-
+                changeScene(actionEvent, "Appointments");
             } else {
                 util.Alert.warn(language.getString("loginTitle"),language.getString("loginHeader"),language.getString("loginContent"));
             }
         } catch (SQLException e) {
 
         }
+    }
+
+    private void changeScene (ActionEvent actionEvent, String sceneName) throws IOException {
+        stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
+        scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
+        stage.setScene(new Scene(scene));
+        stage.show();
     }
 
     @Override
