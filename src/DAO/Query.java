@@ -10,7 +10,6 @@ import static DAO.DBConnection.conn;
  * @author BJ Bjostad
  */
 public class Query {
-    private static Statement statement;
     private static ResultSet results;
 
     /**
@@ -20,7 +19,7 @@ public class Query {
      */
     public static void sendQuery (String q) throws SQLException {
         try {
-             statement = conn.createStatement();
+             Statement statement = conn.createStatement();
              System.out.println(q.toLowerCase().charAt(0));
              switch (q.toLowerCase().charAt(0)) {
                  case 's' :

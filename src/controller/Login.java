@@ -1,5 +1,6 @@
 package controller;
 
+import DAO.DBConnection;
 import DAO.UserDAOImpl;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -52,8 +53,10 @@ public class Login implements Initializable {
      * @param actionEvent
      */
     @FXML
-    private void onExitButton(ActionEvent actionEvent) {
+    private void onExitButton(ActionEvent actionEvent) throws Exception {
         if (util.Alert.confirm(language.getString("exitTitle"),language.getString("exitHeader"),language.getString("exitContent"))) {
+            //close DB connection before exit
+            DBConnection.closeConnection();
             System.exit(0);
         }
     }
