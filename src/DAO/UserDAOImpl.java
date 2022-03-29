@@ -14,9 +14,10 @@ public class UserDAOImpl {
         Query.sendQuery(getUserSQLStatement);
         ResultSet results = Query.getResults();
         while(results.next()){
-            String foundUsername=results.getString("User_Name");
-            String foundPassword=results.getString("Password");
-            foundUser= new User(foundUsername, foundPassword);
+            int foundUserID = results.getInt("User_ID");
+            String foundUsername = results.getString("User_Name");
+            String foundPassword = results.getString("Password");
+            foundUser= new User(foundUserID, foundUsername, foundPassword);
             DBConnection.closeConnection();
             return foundUser;
         }

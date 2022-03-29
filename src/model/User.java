@@ -4,6 +4,7 @@ package model;
  * @author BJ Bjostad
  */
 public class User {
+    private int ID;
     private String username;
     private String password;
 
@@ -12,7 +13,8 @@ public class User {
      * @param username
      * @param password
      */
-    public User(String username, String password) {
+    public User(int id,String username, String password) {
+        this.ID = id;
         this.username = username;
         this.password = password;
     }
@@ -26,14 +28,6 @@ public class User {
     }
 
     /**
-     * password setter
-     * @param password
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    /**
      * username getter
      * @return
      */
@@ -41,11 +35,4 @@ public class User {
         return username;
     }
 
-    /**
-     * username setter
-     * @param username
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
 }

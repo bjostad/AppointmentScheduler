@@ -50,6 +50,6 @@ public class Appointments implements Initializable {
     }
 
     @FXML
-    private void onReportsPage(ActionEvent actionEvent) {
+    private void onReportsPageButton(ActionEvent actionEvent) {
     }
 }
