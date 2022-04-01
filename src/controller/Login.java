@@ -94,6 +94,11 @@ public class Login implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        try {
+            DBConnection.makeConnection();
+        } catch (Exception e) {
+
+        }
         timeZoneSelectionLabel.setText(ZoneId.systemDefault().toString());
         timeZoneLabel.setText(language.getString("timeZoneLabel"));
         logInButton.setText(language.getString("logInButton"));

@@ -23,7 +23,6 @@ public class Main extends Application {
 
     public static void main(String[] args) throws Exception {
         //Locale.setDefault(new Locale("fr"));
-        DBConnection.makeConnection();
         launch(args);
     }
 }
