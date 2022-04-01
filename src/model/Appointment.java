@@ -18,7 +18,7 @@ public class Appointment {
     private int userID;
     private int contactID;
 
-    private Appointment(int ID, String title, String description, String location, String type, Timestamp start, Timestamp end, int customerID, int userID, int contactID) {
+    public Appointment(int ID, String title, String description, String location, String type, Timestamp start, Timestamp end, int customerID, int userID, int contactID) {
         this.ID = ID;
         this.title = title;
         this.description = description;
@@ -31,43 +31,43 @@ public class Appointment {
         this.contactID = contactID;
     }
 
-    private int getID() {
+    public int getID() {
         return ID;
     }
 
-    private String getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    private String getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    private String getLocation() {
+    public String getLocation() {
         return location;
     }
 
-    private String getType() {
+    public String getType() {
         return type;
     }
 
-    private Timestamp getStart() {
+    public Timestamp getStart() {
         return start;
     }
 
-    private Timestamp getEnd() {
+    public Timestamp getEnd() {
         return end;
     }
 
-    private int getCustomerID() {
+    public int getCustomerID() {
         return customerID;
     }
 
-    private int getUserID() {
+    public int getUserID() {
         return userID;
     }
 
-    private int getContactID() {
+    public int getContactID() {
         return contactID;
     }
 }
