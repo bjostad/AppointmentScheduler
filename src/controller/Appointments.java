@@ -93,7 +93,7 @@ public class Appointments implements Initializable {
     }
 
     @FXML
-    private void onDeleteButton(ActionEvent actionEvent) {
+    private void onDeleteAppointmentButton(ActionEvent actionEvent) {
     }
 
     @FXML
@@ -101,6 +101,6 @@ public class Appointments implements Initializable {
     }
 
     @FXML
-    private void onReportsPageButton(ActionEvent actionEvent) {
+    private void onReportsButton(ActionEvent actionEvent) {
     }
 }

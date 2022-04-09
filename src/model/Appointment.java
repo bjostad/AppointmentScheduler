@@ -21,7 +21,9 @@ public class Appointment {
     private int contactID;
     private String contactName;
 
-    public Appointment(int ID, String title, String description, String location, String type, Timestamp start, Timestamp end, int customerID, String customerName, int userID, String userName, int contactID, String contactName) {
+    public Appointment(int ID, String title, String description, String location, String type,
+                       Timestamp start, Timestamp end, int customerID, String customerName,
+                       int userID, String userName, int contactID, String contactName) {
         this.ID = ID;
         this.title = title;
         this.description = description;

@@ -15,7 +15,10 @@ public class AppointmentDAOImpl {
 
     public static ObservableList<Appointment> getAllAppointments() throws SQLException, Exception {
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
-        String getAllAppointmentsSQLStatement = "SELECT * FROM APPOINTMENTS LEFT JOIN CONTACTS ON APPOINTMENTS.CONTACT_ID = CONTACTS.CONTACT_ID LEFT JOIN USERS ON APPOINTMENTS.USER_ID = USERS.USER_ID left join CUSTOMERS ON APPOINTMENTS.CUSTOMER_ID = CUSTOMERS.CUSTOMER_ID";
+        String getAllAppointmentsSQLStatement = "SELECT * FROM APPOINTMENTS AS APPS " +
+                "LEFT JOIN CONTACTS AS CONS ON APPS.CONTACT_ID = CONS.CONTACT_ID " +
+                "LEFT JOIN USERS ON APPS.USER_ID = USERS.USER_ID " +
+                "LEFT JOIN CUSTOMERS AS CUSTS ON APPS.CUSTOMER_ID = CUSTS.CUSTOMER_ID";
         Query.sendQuery(getAllAppointmentsSQLStatement);
         ResultSet results = Query.getResults();
         while(results.next()){
