@@ -9,9 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Customers
-">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Customers">
    <children>
       <ComboBox fx:id="Country" layoutX="1039.0" layoutY="277.0" prefHeight="25.0" prefWidth="212.0" />
       <ComboBox fx:id="firstLevelDivision" layoutX="1039.0" layoutY="314.0" prefHeight="25.0" prefWidth="212.0" />
@@ -20,15 +18,15 @@
           <TableColumn fx:id="idColumn" prefWidth="47.0" text="ID" />
           <TableColumn fx:id="nameColumn" prefWidth="142.0" text="Name" />
             <TableColumn fx:id="phoneNumberColumn" prefWidth="135.0" text="Phone Number" />
-            <TableColumn fx:id="addressColumn" prefWidth="255.0" text="Address" />
-            <TableColumn fx:id="portalCodeColumn" prefWidth="82.0" text="Postal Code" />
-            <TableColumn fx:id="countryColumn" minWidth="0.0" prefWidth="63.0" text="Country" />
-            <TableColumn fx:id="firstLevelDivisionColumn" prefWidth="119.0" text="First-level Division" />
+            <TableColumn fx:id="addressColumn" prefWidth="197.0" text="Address" />
+            <TableColumn fx:id="postalCodeColumn" prefWidth="90.0" text="Postal Code" />
+            <TableColumn fx:id="firstLevelDivisionColumn" prefWidth="138.0" text="First-level Division" />
+            <TableColumn fx:id="countryColumn" minWidth="0.0" prefWidth="94.0" text="Country" />
         </columns>
       </TableView>
-      <Label layoutX="53.0" layoutY="10.0" text="Appointment Scheduler - Customers">
+      <Label layoutX="47.0" layoutY="9.0" text="Customers">
          <font>
-            <Font size="22.0" />
+            <Font name="System Bold" size="22.0" />
          </font>
       </Label>
       <Label layoutX="951.0" layoutY="89.0" text="Customer ID" />
@@ -38,13 +36,14 @@
       <Label layoutX="941.0" layoutY="168.0" text="Phone Number" />
       <Label layoutX="985.0" layoutY="281.0" text="Country" />
       <Label layoutX="936.0" layoutY="318.0" text="First-level Division" />
-      <TextField fx:id="customerID" layoutX="1038.0" layoutY="85.0" prefHeight="25.0" prefWidth="212.0" />
+      <TextField fx:id="customerID" disable="true" editable="false" layoutX="1038.0" layoutY="85.0" prefHeight="25.0" prefWidth="212.0" />
       <TextField fx:id="customerName" layoutX="1038.0" layoutY="126.0" prefHeight="25.0" prefWidth="212.0" />
-      <TextField fx:id="PhoneNumber" layoutX="1038.0" layoutY="164.0" prefHeight="25.0" prefWidth="212.0" />
+      <TextField fx:id="phoneNumber" layoutX="1038.0" layoutY="164.0" prefHeight="25.0" prefWidth="212.0" />
       <TextField fx:id="address" layoutX="1038.0" layoutY="202.0" prefHeight="25.0" prefWidth="212.0" />
       <TextField fx:id="postalCode" layoutX="1038.0" layoutY="240.0" prefHeight="25.0" prefWidth="212.0" />
-      <Button fx:id="saveCustomerButton" layoutX="1078.0" layoutY="618.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="87.0" text="Save" />
-      <Button fx:id="addNewCustomerButton" layoutX="909.0" layoutY="618.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="152.0" text="Create New Customer" />
-      <Button fx:id="deleteCustomerButton" layoutX="1184.0" layoutY="618.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="87.0" text="Delete" />
+      <Button layoutX="1073.0" layoutY="363.0" mnemonicParsing="false" onAction="#saveCustomerButton" prefHeight="32.0" prefWidth="87.0" text="Save" />
+      <Button layoutX="904.0" layoutY="363.0" mnemonicParsing="false" onAction="#addNewCustomerButton" prefHeight="32.0" prefWidth="152.0" text="Create New Customer" />
+      <Button layoutX="1179.0" layoutY="363.0" mnemonicParsing="false" onAction="#deleteCustomerButton" prefHeight="32.0" prefWidth="87.0" text="Delete" />
+      <Button layoutX="905.0" layoutY="604.0" mnemonicParsing="false" onAction="#returnToAppointmentsButton" prefHeight="52.0" prefWidth="362.0" text="Return to Appointments" />
    </children>
 </AnchorPane>

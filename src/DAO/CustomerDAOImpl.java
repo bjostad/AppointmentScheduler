@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.Customer;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -14,11 +15,11 @@ public class CustomerDAOImpl {
 
     public static ObservableList<Customer> getAllCustomer() throws SQLException, Exception {
         ObservableList<Customer> customers = FXCollections.observableArrayList();
-        String getAllCustomersSQLStatement = "SELECT * FROM CUSTOMERS AS CUSTS" +
-                "LEFT JOIN FIRST_LEVEL_DIVISIONS AS FLD ON CUSTS.DIVISION_ID = FLD.DIVISION_ID" +
-                "LEFT JOIN COUNTRIES AS CTRY ON FLD.COUNTRY_ID = CTRY.COUNTRY_ID";
-        Query.sendQuery(getAllCustomersSQLStatement);
-        ResultSet results = Query.getResults();
+        String getAllCustomersSQL = "SELECT * FROM CUSTOMERS " +
+                "LEFT JOIN FIRST_LEVEL_DIVISIONS ON CUSTOMERS.DIVISION_ID = FIRST_LEVEL_DIVISIONS.DIVISION_ID " +
+                "LEFT JOIN COUNTRIES ON FIRST_LEVEL_DIVISIONS.COUNTRY_ID = COUNTRIES.COUNTRY_ID";
+        PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getAllCustomersSQL);
+        ResultSet results = pStatement.executeQuery();
         while(results.next()){
             int ID = results.getInt("Customer_ID");
             String name = results.getString("Customer_Name");
@@ -29,6 +30,7 @@ public class CustomerDAOImpl {
              String division = results.getString("Division");
              int countryID = results.getInt("Country_ID");
              String country = results.getString("Country");
+             customers.add(new Customer(ID,name,address,postalCode,phoneNumber,divisionID,division,countryID,country));
         }
         return customers;
     }

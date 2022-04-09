@@ -51,13 +51,6 @@ public class Appointments implements Initializable {
     @FXML
     private TableView appointmentTable;
 
-    private void changeScene (ActionEvent actionEvent, String sceneName) throws IOException {
-        stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
-        stage.setScene(new Scene(scene));
-        stage.show();
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -80,8 +73,13 @@ public class Appointments implements Initializable {
         } catch (Exception e) {
 
         }
+    }
 
-
+    private void changeScene (ActionEvent actionEvent, String sceneName) throws IOException {
+        stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
+        scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
+        stage.setScene(new Scene(scene));
+        stage.show();
     }
 
     @FXML
@@ -97,10 +95,26 @@ public class Appointments implements Initializable {
     }
 
     @FXML
-    private void onCustomerButton(ActionEvent actionEvent) {
+    private void onCustomerButton(ActionEvent actionEvent) throws IOException {
+        try {
+            DBConnection.closeConnection();
+            changeScene( actionEvent, "Customers");
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     @FXML
     private void onReportsButton(ActionEvent actionEvent) {
+    }
+
+    @FXML
+    private void onExitButton(ActionEvent actionEvent) throws Exception {
+        if (util.Alert.confirm("Exit","Close Application","Are you sure you want to close the application?")) {
+            //close DB connection before exit
+            DBConnection.closeConnection();
+            System.exit(0);
+        }
     }
 }

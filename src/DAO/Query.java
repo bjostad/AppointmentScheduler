@@ -4,12 +4,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static DAO.DBConnection.conn;
+import static DAO.DBConnection.dbConnection;
 
 /**
  * @author BJ Bjostad
  */
 public class Query {
+    private static Statement statement;
     private static ResultSet results;
 
     /**
@@ -19,7 +20,7 @@ public class Query {
      */
     public static void sendQuery (String q) throws SQLException {
         try {
-             Statement statement = conn.createStatement();
+             statement = dbConnection.createStatement();
              System.out.println(q.toLowerCase().charAt(0));
              switch (q.toLowerCase().charAt(0)) {
                  case 's' :

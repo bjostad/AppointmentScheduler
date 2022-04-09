@@ -17,7 +17,7 @@ public class Customer {
 
 
 
-    private Customer(int ID, String name, String address, String postalCode, String phoneNumber, int divisionID, String division, int countryID, String country) {
+    public Customer(int ID, String name, String address, String postalCode, String phoneNumber, int divisionID, String division, int countryID, String country) {
         this.ID = ID;
         this.name = name;
         this.address = address;
@@ -29,39 +29,39 @@ public class Customer {
         this.country = country;
     }
 
-    private int getID() {
+    public int getID() {
         return ID;
     }
 
-    private String getName() {
+    public String getName() {
         return name;
     }
 
-    private String getAddress() {
+    public String getAddress() {
         return address;
     }
 
-    private String getPostalCode() {
+    public String getPostalCode() {
         return postalCode;
     }
 
-    private String getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    private int getDivisionID() {
+    public int getDivisionID() {
         return divisionID;
     }
 
-    private String getDivision() {
+    public String getDivision() {
         return division;
     }
 
-    private int getCountryID() {
+    public int getCountryID() {
         return countryID;
     }
 
-    private String getCountry() {
+    public String getCountry() {
         return country;
     }
 }

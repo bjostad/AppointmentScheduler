@@ -76,6 +76,7 @@ public class Login implements Initializable {
                 loginUserPassword = loginUser.getPassword();
             }
             if(passwordText.getText().equals(loginUserPassword)){
+                DBConnection.closeConnection();
                 changeScene(actionEvent, "Appointments");
             } else {
                 util.Alert.warn(language.getString("loginTitle"),language.getString("loginHeader"),language.getString("loginContent"));
