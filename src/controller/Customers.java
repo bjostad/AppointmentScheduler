@@ -17,6 +17,7 @@ import model.Customer;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 /**
@@ -59,7 +60,7 @@ public class Customers implements Initializable {
     @FXML
     private Button deleteCustomerButton;
     @FXML
-    private ComboBox Country;
+    private ComboBox country;
     @FXML
     private ComboBox firstLevelDivision;
 
@@ -68,11 +69,9 @@ public class Customers implements Initializable {
         try {
             DBConnection.makeConnection();
             populateCustomerTable();
-
-
-
+            populateCountryComboBox();
         } catch (Exception e) {
-
+            //TODO real error handling
         }
     }
 
@@ -89,12 +88,28 @@ public class Customers implements Initializable {
             countryColumn.setCellValueFactory(new PropertyValueFactory<>("country"));
             firstLevelDivisionColumn.setCellValueFactory(new PropertyValueFactory<>("division"));
         } catch (Exception e) {
+            //TODO real error handling
             System.out.println("Populate customer table error: "+e);
         }
     }
 
-    private void populateGeographicAreaComboBoxes(){
+    private void populateCountryComboBox() {
+        try {
+            country.setItems(CustomerDAOImpl.getAllCountries());
+        } catch (SQLException e) {
+            //TODO real error handling
+        }
 
+    }
+
+    @FXML
+    private void onCountrySelected(ActionEvent actionEvent) {
+        try {
+            String country = (String)this.country.getSelectionModel().getSelectedItem();
+            firstLevelDivision.setItems((CustomerDAOImpl.getCountryDivisions(country)));
+        } catch (SQLException e){
+            //TODO error handling
+        }
     }
 
     private void changeScene (ActionEvent actionEvent, String sceneName) throws IOException {
@@ -107,12 +122,15 @@ public class Customers implements Initializable {
     @FXML
     private void onCustomerTableClicked(MouseEvent mouseEvent) {
         Customer selectedCustomer = (Customer) customerTable.getSelectionModel().getSelectedItem();
+        country.getSelectionModel().select(selectedCustomer.getCountryID()-1);
         customerID.setText(String.valueOf(selectedCustomer.getID()));
         customerName.setText(selectedCustomer.getName());
         phoneNumber.setText(selectedCustomer.getPhoneNumber());
         address.setText(selectedCustomer.getAddress());
         postalCode.setText(selectedCustomer.getPostalCode());
+        firstLevelDivision.getSelectionModel().select(selectedCustomer.getDivision());
     }
+
 
     @FXML
     private void saveCustomerButton(ActionEvent actionEvent) {
@@ -131,4 +149,6 @@ public class Customers implements Initializable {
         DBConnection.closeConnection();
         changeScene(actionEvent,"Appointments");
     }
+
+
 }

@@ -13,7 +13,7 @@ import java.sql.SQLException;
  */
 public class CustomerDAOImpl {
 
-    public static ObservableList<Customer> getAllCustomer() throws SQLException, Exception {
+    public static ObservableList<Customer> getAllCustomer() throws SQLException {
         ObservableList<Customer> customers = FXCollections.observableArrayList();
         String getAllCustomersSQL = "SELECT * FROM CUSTOMERS " +
                 "LEFT JOIN FIRST_LEVEL_DIVISIONS ON CUSTOMERS.DIVISION_ID = FIRST_LEVEL_DIVISIONS.DIVISION_ID " +
@@ -33,5 +33,45 @@ public class CustomerDAOImpl {
              customers.add(new Customer(ID,name,address,postalCode,phoneNumber,divisionID,division,countryID,country));
         }
         return customers;
+    }
+
+    public static ObservableList<String> getAllCountries() throws SQLException {
+        ObservableList<String> countries = FXCollections.observableArrayList();
+        String getAllCountriesSQL = "SELECT COUNTRY FROM COUNTRIES";
+        PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getAllCountriesSQL);
+        ResultSet results = pStatement.executeQuery();
+        while(results.next()){
+            countries.add(results.getString("COUNTRY"));
+        }
+        return countries;
+    }
+
+    public static int getCountryID(String country){
+        try {
+          String getCountryIDSQL = "SELECT COUNTRY_ID FROM COUNTRIES WHERE COUNTRY = ?";
+          PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getCountryIDSQL);
+          pStatement.setString(1,country);
+          ResultSet result = pStatement.executeQuery();
+          while(result.next()) {
+              return result.getInt("Country_ID");
+          }
+        } catch (SQLException e) {
+            //TODO error handling
+            System.out.println("Error getting country ID: "+e);
+        }
+        return 0;
+    }
+
+    public static ObservableList<String> getCountryDivisions(String country) throws SQLException {
+        int countryID = getCountryID(country);
+        ObservableList<String> divisions = FXCollections.observableArrayList();
+        String getAllDivisionsSQL = "SELECT DIVISION FROM FIRST_LEVEL_DIVISIONS WHERE COUNTRY_ID = ?";
+        PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getAllDivisionsSQL);
+        pStatement.setInt(1,countryID);
+        ResultSet results = pStatement.executeQuery();
+        while(results.next()){
+            divisions.add(results.getString("DIVISION"));
+        }
+        return divisions;
     }
 }

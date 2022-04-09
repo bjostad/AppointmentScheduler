@@ -11,7 +11,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Customers">
    <children>
-      <ComboBox fx:id="Country" layoutX="1039.0" layoutY="277.0" prefHeight="25.0" prefWidth="212.0" />
+      <ComboBox fx:id="country" layoutX="1039.0" layoutY="277.0" onAction="#onCountrySelected" prefHeight="25.0" prefWidth="212.0" />
       <ComboBox fx:id="firstLevelDivision" layoutX="1039.0" layoutY="314.0" prefHeight="25.0" prefWidth="212.0" />
       <TableView fx:id="customerTable" layoutX="23.0" layoutY="49.0" onMouseClicked="#onCustomerTableClicked" prefHeight="628.0" prefWidth="844.0">
         <columns>
