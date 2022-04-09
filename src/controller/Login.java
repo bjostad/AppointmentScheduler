@@ -47,6 +47,7 @@ public class Login implements Initializable {
 
     private ResourceBundle language = ResourceBundle.getBundle("resources/language",Locale.getDefault());
 
+    public static User currentUser = null;
 
     /**
      * Confirm user wishes to exit and exit program
@@ -76,6 +77,7 @@ public class Login implements Initializable {
                 loginUserPassword = loginUser.getPassword();
             }
             if(passwordText.getText().equals(loginUserPassword)){
+                currentUser = loginUser;
                 DBConnection.closeConnection();
                 changeScene(actionEvent, "Appointments");
             } else {
@@ -86,11 +88,17 @@ public class Login implements Initializable {
         }
     }
 
-    private void changeScene (ActionEvent actionEvent, String sceneName) throws IOException {
-        stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
-        stage.setScene(new Scene(scene));
-        stage.show();
+    private void changeScene (ActionEvent actionEvent, String sceneName){
+        try {
+            stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
+            scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
+            stage.setScene(new Scene(scene));
+            stage.centerOnScreen();
+            stage.show();
+        } catch (IOException e){
+            //TODO error handling
+            System.out.println(e);
+        }
     }
 
     @Override

@@ -54,6 +54,7 @@ public class Appointments implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
+
             DBConnection.makeConnection();
             ObservableList<Appointment> appointments = AppointmentDAOImpl.getAllAppointments();
             System.out.println(appointments);
@@ -71,15 +72,21 @@ public class Appointments implements Initializable {
             userIdColumn.setCellValueFactory(new PropertyValueFactory<>("userID"));
 
         } catch (Exception e) {
-
+            //TODO error handling
         }
     }
 
-    private void changeScene (ActionEvent actionEvent, String sceneName) throws IOException {
-        stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
-        stage.setScene(new Scene(scene));
-        stage.show();
+    private void changeScene (ActionEvent actionEvent, String sceneName){
+        try {
+            stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
+            scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
+            stage.setScene(new Scene(scene));
+            stage.centerOnScreen();
+            stage.show();
+        } catch (IOException e){
+            //TODO error handling
+            System.out.println(e);
+        }
     }
 
     @FXML

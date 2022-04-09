@@ -20,7 +20,7 @@ public class DBConnection {
      */
     public static void makeConnection() throws ClassNotFoundException, SQLException, Exception {
         try{
-            dbConnection =(Connection) DriverManager.getConnection(dbURL,username,password);
+            dbConnection=(Connection) DriverManager.getConnection(dbURL,username,password);
             System.out.println(dbConnection);
         } catch (SQLException e) {
             // TODO error handling

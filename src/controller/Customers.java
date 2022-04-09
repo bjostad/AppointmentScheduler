@@ -54,11 +54,11 @@ public class Customers implements Initializable {
     @FXML
     private TextField postalCode;
     @FXML
-    private Button saveCustomerButton;
+    private Button onSaveCustomerButton;
     @FXML
-    private Button addNewCustomerButton;
+    private Button onCreateNewCustomerButton;
     @FXML
-    private Button deleteCustomerButton;
+    private Button onDeleteCustomerButton;
     @FXML
     private ComboBox country;
     @FXML
@@ -99,7 +99,6 @@ public class Customers implements Initializable {
         } catch (SQLException e) {
             //TODO real error handling
         }
-
     }
 
     @FXML
@@ -107,41 +106,85 @@ public class Customers implements Initializable {
         try {
             String country = (String)this.country.getSelectionModel().getSelectedItem();
             firstLevelDivision.setItems((CustomerDAOImpl.getCountryDivisions(country)));
-        } catch (SQLException e){
+        } catch (Exception e){
             //TODO error handling
         }
     }
 
-    private void changeScene (ActionEvent actionEvent, String sceneName) throws IOException {
-        stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
-        stage.setScene(new Scene(scene));
-        stage.show();
+    private void changeScene (ActionEvent actionEvent, String sceneName){
+        try {
+            stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
+            scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
+            stage.setScene(new Scene(scene));
+            stage.centerOnScreen();
+            stage.show();
+        } catch (IOException e){
+            //TODO error handling
+            System.out.println(e);
+        }
     }
 
     @FXML
     private void onCustomerTableClicked(MouseEvent mouseEvent) {
-        Customer selectedCustomer = (Customer) customerTable.getSelectionModel().getSelectedItem();
-        country.getSelectionModel().select(selectedCustomer.getCountryID()-1);
-        customerID.setText(String.valueOf(selectedCustomer.getID()));
-        customerName.setText(selectedCustomer.getName());
-        phoneNumber.setText(selectedCustomer.getPhoneNumber());
-        address.setText(selectedCustomer.getAddress());
-        postalCode.setText(selectedCustomer.getPostalCode());
-        firstLevelDivision.getSelectionModel().select(selectedCustomer.getDivision());
+        try{
+            Customer selectedCustomer = (Customer) customerTable.getSelectionModel().getSelectedItem();
+            customerID.setText(String.valueOf(selectedCustomer.getID()));
+            customerName.setText(selectedCustomer.getName());
+            phoneNumber.setText(selectedCustomer.getPhoneNumber());
+            address.setText(selectedCustomer.getAddress());
+            postalCode.setText(selectedCustomer.getPostalCode());
+            country.getSelectionModel().select(selectedCustomer.getCountry());
+            firstLevelDivision.getSelectionModel().select(selectedCustomer.getDivision());
+        } catch (Exception e){
+            //TODO actual error handling
+            System.out.println(e);
+        }
     }
 
 
     @FXML
-    private void saveCustomerButton(ActionEvent actionEvent) {
+    private void onSaveCustomerButton(ActionEvent actionEvent) {
+        try{
+            String divisionName = (String)firstLevelDivision.getSelectionModel().getSelectedItem();
+            int divisionID = CustomerDAOImpl.getDivisionID(divisionName);
+            Customer updatedCustomer = new Customer(Integer.parseInt(customerID.getText()),customerName.getText(),
+                    address.getText(),postalCode.getText(),phoneNumber.getText(),
+                    divisionID,divisionName,0,null);
+            CustomerDAOImpl.updateCustomer(updatedCustomer);
+            populateCustomerTable();
+
+        } catch (Exception e){
+            //TODO error handling
+            System.out.println(e);
+        }
     }
 
     @FXML
-    private void addNewCustomerButton(ActionEvent actionEvent) {
+    private void onCreateNewCustomerButton(ActionEvent actionEvent) {
+        try {
+            String divisionName = (String)firstLevelDivision.getSelectionModel().getSelectedItem();
+            int divisionID = CustomerDAOImpl.getDivisionID(divisionName);
+            Customer newCustomer = new Customer(0,customerName.getText(),
+                    address.getText(),postalCode.getText(),phoneNumber.getText(),
+                    divisionID,divisionName,0,null);
+            CustomerDAOImpl.createNewCustomer(newCustomer);
+            populateCustomerTable();
+        } catch (Exception e){
+            //TODO error handling
+            System.out.println(e);
+        }
     }
 
     @FXML
-    private void deleteCustomerButton(ActionEvent actionEvent) {
+    private void onDeleteCustomerButton(ActionEvent actionEvent) {
+        //TODO check for appointments under customer, do not delete customer if appointments exist
+        try {
+            CustomerDAOImpl.deleteCustomer(customerID.getText());
+            populateCustomerTable();
+        } catch (Exception e){
+            //TODO error handling
+            System.out.println(e);
+        }
     }
 
     @FXML
@@ -149,6 +192,4 @@ public class Customers implements Initializable {
         DBConnection.closeConnection();
         changeScene(actionEvent,"Appointments");
     }
-
-
 }
