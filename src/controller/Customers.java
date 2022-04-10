@@ -111,19 +111,6 @@ public class Customers implements Initializable {
         }
     }
 
-    private void changeScene (ActionEvent actionEvent, String sceneName){
-        try {
-            stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
-            scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
-            stage.setScene(new Scene(scene));
-            stage.centerOnScreen();
-            stage.show();
-        } catch (IOException e){
-            //TODO error handling
-            System.out.println(e);
-        }
-    }
-
     @FXML
     private void onCustomerTableClicked(MouseEvent mouseEvent) {
         try{
@@ -182,6 +169,19 @@ public class Customers implements Initializable {
             CustomerDAOImpl.deleteCustomer(customerID.getText());
             populateCustomerTable();
         } catch (Exception e){
+            //TODO error handling
+            System.out.println(e);
+        }
+    }
+
+    private void changeScene (ActionEvent actionEvent, String sceneName){
+        try {
+            stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
+            scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
+            stage.setScene(new Scene(scene));
+            stage.centerOnScreen();
+            stage.show();
+        } catch (IOException e){
             //TODO error handling
             System.out.println(e);
         }

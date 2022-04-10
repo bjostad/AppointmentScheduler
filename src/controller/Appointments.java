@@ -1,6 +1,7 @@
 package controller;
 
 import DAO.AppointmentDAOImpl;
+import DAO.CustomerDAOImpl;
 import DAO.DBConnection;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,12 +14,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.Appointment;
+import util.Alert;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
 /**
@@ -29,36 +33,50 @@ public class Appointments implements Initializable {
     Stage stage;
     Parent scene;
     @FXML
-    private TableColumn appointmentIdColumn;
+    private TableColumn<Appointment, Integer> appointmentIdColumn;
     @FXML
-    private TableColumn startDateTimeColumn;
+    private TableColumn<Appointment, LocalDateTime> startDateTimeColumn;
     @FXML
-    private TableColumn endDateTimeColumn;
+    private TableColumn<Appointment, LocalDateTime> endDateTimeColumn;
     @FXML
-    private TableColumn titleColumn;
+    private TableColumn<Appointment, String> titleColumn;
     @FXML
-    private TableColumn descriptionColumn;
+    private TableColumn<Appointment, String> descriptionColumn;
     @FXML
-    private TableColumn locationColumn;
+    private TableColumn<Appointment, String> locationColumn;
     @FXML
-    private TableColumn contactColumn;
+    private TableColumn<Appointment, String> contactColumn;
     @FXML
-    private TableColumn typeColumn;
+    private TableColumn<Appointment, String> typeColumn;
     @FXML
-    private TableColumn customerIdColumn;
+    private TableColumn<Appointment, Integer> customerIdColumn;
     @FXML
-    private TableColumn userIdColumn;
+    private TableColumn<Appointment, Integer> userIdColumn;
     @FXML
     private TableView appointmentTable;
+
+    private static Appointment selectedAppointment = null;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-
             DBConnection.makeConnection();
+            populateAppointmentTable();
+
+        } catch (Exception e) {
+            //TODO error handling
+            System.out.println(e);
+        }
+    }
+
+    public static Appointment getSelectedAppointment() {
+        return selectedAppointment;
+    }
+
+    private void populateAppointmentTable(){
+        try{
             ObservableList<Appointment> appointments = AppointmentDAOImpl.getAllAppointments();
             System.out.println(appointments);
-
             appointmentTable.setItems(appointments);
             appointmentIdColumn.setCellValueFactory(new PropertyValueFactory<>("ID"));
             startDateTimeColumn.setCellValueFactory(new PropertyValueFactory<>("start"));
@@ -70,9 +88,19 @@ public class Appointments implements Initializable {
             typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
             customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("customerName"));
             userIdColumn.setCellValueFactory(new PropertyValueFactory<>("userID"));
-
         } catch (Exception e) {
             //TODO error handling
+            System.out.println(e);
+        }
+    }
+
+    @FXML
+    private void onAppointmentSelected(MouseEvent mouseEvent) {
+        try{
+            selectedAppointment = (Appointment) appointmentTable.getSelectionModel().getSelectedItem();
+        } catch (Exception e) {
+            //TODO error handling
+            System.out.println(e);
         }
     }
 
@@ -91,14 +119,49 @@ public class Appointments implements Initializable {
 
     @FXML
     private void onNewAppointmentButton(ActionEvent actionEvent) {
+        try {
+            DBConnection.closeConnection();
+            changeScene( actionEvent, "NewAppointment");
+
+        } catch (Exception e) {
+            //TODO error handling
+            System.out.println(e);
+        }
     }
 
     @FXML
     private void onEditAppointmentButton(ActionEvent actionEvent) {
+        if (appointmentTable.getSelectionModel().getSelectedItem() != null) {
+            try {
+                DBConnection.closeConnection();
+                changeScene( actionEvent, "EditAppointment");
+
+            } catch (Exception e) {
+                //TODO error handling
+                System.out.println(e);
+            }
+        } else {
+            Alert.warn("Invalid Selection","Invalid Selection","Please select an appointment.");
+        }
     }
 
     @FXML
     private void onDeleteAppointmentButton(ActionEvent actionEvent) {
+        if (appointmentTable.getSelectionModel().getSelectedItem() != null) {
+            if (Alert.confirm("Delete Appointment","Delete Appointment","Are you sure?")){
+                try {
+                    if(AppointmentDAOImpl.deleteAppointment(selectedAppointment.getID())){
+                        Alert.info("Appointment Deleted", "Appointment Deleted Successfully","Appointment "+selectedAppointment.getID()+" has been deleted.");
+                    }
+                    populateAppointmentTable();
+                } catch (Exception e){
+                    //TODO error handling
+                    System.out.println(e);
+                }
+            }
+        } else {
+            Alert.warn("Invalid Selection","Invalid Selection","Please select an appointment.");
+        }
     }
 
     @FXML

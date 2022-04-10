@@ -144,8 +144,8 @@ public class CustomerDAOImpl {
 
     public static boolean deleteCustomer(String customerID){
         try{
-            String createCustomerSQL = "DELETE FROM CUSTOMERS WHERE CUSTOMER_ID = ?";
-            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(createCustomerSQL);
+            String deleteCustomerSQL = "DELETE FROM CUSTOMERS WHERE CUSTOMER_ID = ?";
+            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(deleteCustomerSQL);
             pStatement.setString(1,(customerID));
             pStatement.executeUpdate();
             return true;
