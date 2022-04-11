@@ -129,9 +129,9 @@ public class NewEditAppointment implements Initializable {
 
             model.Appointment selectedAppointment = Appointments.getSelectedAppointment();
             appointmentID.setText(String.valueOf(selectedAppointment.getID()));
-            //date
-            //starttime
-            //endtime
+            date.setValue(selectedAppointment.getStart().toLocalDate());
+            startTime.setText(selectedAppointment.getStart().toLocalTime().toString());
+            endTime.setText(selectedAppointment.getEnd().toLocalTime().toString());
             title.setText(selectedAppointment.getTitle());
             description.setText(selectedAppointment.getDescription());
             location.setText(selectedAppointment.getLocation());
@@ -147,16 +147,24 @@ public class NewEditAppointment implements Initializable {
     }
 
     @FXML
-    private void returnToAppointmentsButton(ActionEvent actionEvent) throws Exception {
-        DBConnection.closeConnection();
-        changeScene(actionEvent,"Appointments");
-    }
-
-    @FXML
     private void onSaveButton(ActionEvent actionEvent) {
         //TODO check for existing appointment
         //TODO check if new or edit and adjust appropriately
         try{
+            if(Alert.confirm("Save Appointment",
+                    "Save Appointment?",
+                    "Are you sure you want to save the appointment?")){
+                saveAppointment();
+                changeScene(actionEvent,"Appointments");
+            }
+
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    private void saveAppointment(){
+        try {
             model.Appointment createdAppointment = new model.Appointment(
                     determineAppID(),
                     title.getText(),
@@ -176,8 +184,8 @@ public class NewEditAppointment implements Initializable {
             } else {
                 AppointmentDAOImpl.updateAppointment(createdAppointment);
             }
-
         } catch (Exception e){
+            //TODO capture and alert proper invalid entries
             System.out.println(e);
         }
     }
@@ -203,6 +211,16 @@ public class NewEditAppointment implements Initializable {
         LocalDateTime endDateTime = LocalDateTime.parse(selectedStartDateTime, formatDateTime);
         System.out.println(endDateTime);
         return endDateTime;
+    }
+
+    @FXML
+    private void returnToAppointmentsButton(ActionEvent actionEvent) throws Exception {
+        if (util.Alert.confirm("Return",
+                "Return to Appointments Menu",
+                "Are you sure you want to return to the Appointments menu with saving?")) {
+            DBConnection.closeConnection();
+            changeScene(actionEvent, "Appointments");
+        }
     }
 
     private void changeScene (ActionEvent actionEvent, String sceneName){

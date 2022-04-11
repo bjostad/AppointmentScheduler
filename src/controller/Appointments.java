@@ -94,11 +94,6 @@ public class Appointments implements Initializable {
         }
     }
 
-    @FXML
-    private void onAppointmentSelected(MouseEvent mouseEvent) {
-        //TODO remove along with fxml element
-    }
-
     private void changeScene (ActionEvent actionEvent, String sceneName){
         try {
             stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();

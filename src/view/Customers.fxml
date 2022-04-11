@@ -7,12 +7,14 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Customers">
    <children>
-      <ComboBox fx:id="country" layoutX="1039.0" layoutY="277.0" onAction="#onCountrySelected" prefHeight="25.0" prefWidth="212.0" />
-      <ComboBox fx:id="firstLevelDivision" layoutX="1039.0" layoutY="314.0" prefHeight="25.0" prefWidth="212.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#b5b5b5" height="390.0" layoutX="898.0" layoutY="114.0" stroke="BLACK" strokeType="INSIDE" width="389.0" />
+      <ComboBox fx:id="country" layoutX="1032.0" layoutY="344.0" onAction="#onCountrySelected" prefHeight="25.0" prefWidth="212.0" />
+      <ComboBox fx:id="firstLevelDivision" layoutX="1032.0" layoutY="381.0" prefHeight="25.0" prefWidth="212.0" />
       <TableView fx:id="customerTable" layoutX="23.0" layoutY="49.0" onMouseClicked="#onCustomerTableClicked" prefHeight="628.0" prefWidth="844.0">
         <columns>
           <TableColumn fx:id="idColumn" prefWidth="47.0" text="ID" />
@@ -29,21 +31,33 @@
             <Font name="System Bold" size="22.0" />
          </font>
       </Label>
-      <Label layoutX="951.0" layoutY="89.0" text="Customer ID" />
-      <Label layoutX="935.0" layoutY="130.0" text="Customer Name" />
-      <Label layoutX="979.0" layoutY="206.0" text="Address" />
-      <Label layoutX="961.0" layoutY="244.0" text="Postal Code" />
-      <Label layoutX="941.0" layoutY="168.0" text="Phone Number" />
-      <Label layoutX="985.0" layoutY="281.0" text="Country" />
-      <Label layoutX="936.0" layoutY="318.0" text="First-level Division" />
-      <TextField fx:id="customerID" disable="true" editable="false" layoutX="1038.0" layoutY="85.0" prefHeight="25.0" prefWidth="212.0" />
-      <TextField fx:id="customerName" layoutX="1038.0" layoutY="126.0" prefHeight="25.0" prefWidth="212.0" />
-      <TextField fx:id="phoneNumber" layoutX="1038.0" layoutY="164.0" prefHeight="25.0" prefWidth="212.0" />
-      <TextField fx:id="address" layoutX="1038.0" layoutY="202.0" prefHeight="25.0" prefWidth="212.0" />
-      <TextField fx:id="postalCode" layoutX="1038.0" layoutY="240.0" prefHeight="25.0" prefWidth="212.0" />
-      <Button layoutX="1073.0" layoutY="363.0" mnemonicParsing="false" onAction="#onSaveCustomerButton" prefHeight="32.0" prefWidth="87.0" text="Save" />
-      <Button layoutX="904.0" layoutY="363.0" mnemonicParsing="false" onAction="#onCreateNewCustomerButton" prefHeight="32.0" prefWidth="152.0" text="Create New Customer" />
-      <Button layoutX="1179.0" layoutY="363.0" mnemonicParsing="false" onAction="#onDeleteCustomerButton" prefHeight="32.0" prefWidth="87.0" text="Delete" />
-      <Button layoutX="905.0" layoutY="604.0" mnemonicParsing="false" onAction="#returnToAppointmentsButton" prefHeight="52.0" prefWidth="362.0" text="Return to Appointments" />
+      <Label layoutX="944.0" layoutY="156.0" text="Customer ID" />
+      <Label layoutX="928.0" layoutY="197.0" text="Customer Name" />
+      <Label layoutX="972.0" layoutY="273.0" text="Address" />
+      <Label layoutX="954.0" layoutY="311.0" text="Postal Code" />
+      <Label layoutX="934.0" layoutY="235.0" text="Phone Number" />
+      <Label layoutX="978.0" layoutY="348.0" text="Country" />
+      <Label layoutX="929.0" layoutY="385.0" text="First-level Division" />
+      <TextField fx:id="customerID" disable="true" editable="false" layoutX="1031.0" layoutY="152.0" prefHeight="25.0" prefWidth="212.0" />
+      <TextField fx:id="customerName" layoutX="1031.0" layoutY="193.0" prefHeight="25.0" prefWidth="212.0" />
+      <TextField fx:id="phoneNumber" layoutX="1031.0" layoutY="231.0" prefHeight="25.0" prefWidth="212.0" />
+      <TextField fx:id="address" layoutX="1031.0" layoutY="269.0" prefHeight="25.0" prefWidth="212.0" />
+      <TextField fx:id="postalCode" layoutX="1031.0" layoutY="307.0" prefHeight="25.0" prefWidth="212.0" />
+      <Button layoutX="911.0" layoutY="431.0" mnemonicParsing="false" onAction="#onSaveCustomerButton" prefHeight="52.0" prefWidth="362.0" text="Save Changes">
+         <font>
+            <Font size="16.0" />
+         </font></Button>
+      <Button layoutX="908.0" layoutY="56.0" mnemonicParsing="false" onAction="#onCreateNewCustomerButton" prefHeight="44.0" prefWidth="362.0" text="Create New Customer">
+         <font>
+            <Font size="16.0" />
+         </font></Button>
+      <Button layoutX="329.0" layoutY="8.0" mnemonicParsing="false" onAction="#onDeleteCustomerButton" prefHeight="35.0" prefWidth="212.0" text="Delete Selected Customer" textFill="RED">
+         <font>
+            <Font size="16.0" />
+         </font></Button>
+      <Button layoutX="908.0" layoutY="619.0" mnemonicParsing="false" onAction="#returnToAppointmentsButton" prefHeight="52.0" prefWidth="362.0" text="Return to Appointments" textFill="RED">
+         <font>
+            <Font size="16.0" />
+         </font></Button>
    </children>
 </AnchorPane>
