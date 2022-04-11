@@ -43,6 +43,34 @@ public class CustomerDAOImpl {
         return null;
     }
 
+    public static Customer getCustomerByID(int selectedCustomerID){
+        try{
+            String getAllCustomerByIDSQL = "SELECT * FROM CUSTOMERS " +
+                    "LEFT JOIN FIRST_LEVEL_DIVISIONS ON CUSTOMERS.DIVISION_ID = FIRST_LEVEL_DIVISIONS.DIVISION_ID " +
+                    "LEFT JOIN COUNTRIES ON FIRST_LEVEL_DIVISIONS.COUNTRY_ID = COUNTRIES.COUNTRY_ID " +
+                    "WHERE CUSTOMER_ID = ?";
+            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getAllCustomerByIDSQL);
+            pStatement.setInt(1,selectedCustomerID);
+            ResultSet results = pStatement.executeQuery();
+            while(results.next()){
+                int ID = results.getInt("Customer_ID");
+                String name = results.getString("Customer_Name");
+                String address = results.getString("Address");
+                String postalCode = results.getString("Postal_Code");
+                String phoneNumber = results.getString("Phone");
+                int divisionID = results.getInt("Division_ID");
+                String division = results.getString("Division");
+                int countryID = results.getInt("Country_ID");
+                String country = results.getString("Country");
+                return new Customer(ID,name,address,postalCode,phoneNumber,divisionID,division,countryID,country);
+            }
+        } catch (SQLException e) {
+            //TODO Error handling
+            System.out.println(e);
+        }
+        return null;
+    }
+
     public static ObservableList<String> getAllCountries() throws SQLException {
         ObservableList<String> countries = FXCollections.observableArrayList();
         String getAllCountriesSQL = "SELECT COUNTRY FROM COUNTRIES";
@@ -107,7 +135,9 @@ public class CustomerDAOImpl {
 
     public static boolean updateCustomer(Customer customer){
         try{
-            String updateCustomerSQL = "UPDATE CUSTOMERS SET CUSTOMER_NAME=?,ADDRESS=?,POSTAL_CODE=?,PHONE=?,LAST_UPDATE=NOW(),LAST_UPDATED_BY=?,DIVISION_ID=? WHERE CUSTOMER_ID = ?";
+            String updateCustomerSQL = "UPDATE CUSTOMERS SET CUSTOMER_NAME=?,ADDRESS=?,POSTAL_CODE=?,PHONE=?," +
+                                       "LAST_UPDATE=NOW(),LAST_UPDATED_BY=?,DIVISION_ID=? " +
+                                       "WHERE CUSTOMER_ID = ?";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(updateCustomerSQL);
             pStatement.setString(1,customer.getName());
             pStatement.setString(2,customer.getAddress());

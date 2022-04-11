@@ -49,20 +49,49 @@ public class AppointmentDAOImpl {
 
     public static boolean addAppointment(Appointment appointment){
         try{
-            String createCustomerSQL = "INSERT INTO APPOINTMENTS(TITLE,DESCRIPTION,LOCATION,TYPE," +
+            String createAppointmentSQL = "INSERT INTO APPOINTMENTS(TITLE,DESCRIPTION,LOCATION,TYPE," +
                                        "START,END,CREATE_DATE,CREATED_BY,LAST_UPDATE,LAST_UPDATED_BY," +
                                        "CUSTOMER_ID,USER_ID,CONTACT_ID) " +
-                                       "VALUES(?,?,?,?,now(),now(),now(),?,now(),?,?,?,?)";
-            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(createCustomerSQL);
+                                       "VALUES(?,?,?,?,?,?,now(),?,now(),?,?,?,?)";
+            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(createAppointmentSQL);
             pStatement.setString(1, appointment.getTitle());
             pStatement.setString(2, appointment.getDescription());
             pStatement.setString(3, appointment.getLocation());
-            pStatement.setString(4,appointment.getType());
-            pStatement.setString(5, Login.currentUser.getUsername());
-            pStatement.setString(6, Login.currentUser.getUsername());
-            pStatement.setInt(7,appointment.getCustomerID());
-            pStatement.setInt(8,appointment.getUserID());
-            pStatement.setInt(9,appointment.getContactID());
+            pStatement.setString(4, appointment.getType());
+            pStatement.setString(5, appointment.getStart().toString());
+            pStatement.setString(6, appointment.getEnd().toString());
+            pStatement.setString(7, Login.currentUser.getUsername());
+            pStatement.setString(8, Login.currentUser.getUsername());
+            pStatement.setInt(9,appointment.getCustomerID());
+            pStatement.setInt(10,appointment.getUserID());
+            pStatement.setInt(11,appointment.getContactID());
+            pStatement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            //TODO error handling
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    public static boolean updateAppointment(Appointment appointment) {
+        try{
+            String updateAppointmentSQL = "UPDATE APPOINTMENTS SET TITLE = ?,DESCRIPTION=?,LOCATION=?," +
+                                          "TYPE=?,START=?, END=?,LAST_UPDATE=NOW(),LAST_UPDATED_BY=?," +
+                                          "CUSTOMER_ID=?, USER_ID=?,CONTACT_ID=? " +
+                                          "WHERE APPOINTMENT_ID = ?";
+            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(updateAppointmentSQL);
+            pStatement.setString(1, appointment.getTitle());
+            pStatement.setString(2, appointment.getDescription());
+            pStatement.setString(3, appointment.getLocation());
+            pStatement.setString(4, appointment.getType());
+            pStatement.setString(5, appointment.getStart().toString());
+            pStatement.setString(6, appointment.getEnd().toString());
+            pStatement.setString(7, Login.currentUser.getUsername());
+            pStatement.setInt(8,appointment.getCustomerID());
+            pStatement.setInt(9,appointment.getUserID());
+            pStatement.setInt(10,appointment.getContactID());
+            pStatement.setInt(11,appointment.getID());
             pStatement.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -85,4 +114,6 @@ public class AppointmentDAOImpl {
         }
         return false;
     }
+
+
 }

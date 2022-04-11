@@ -9,10 +9,10 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="425.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.NewAppointment">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="425.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.NewEditAppointment">
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#b5b5b5" height="528.0" layoutX="21.0" layoutY="60.0" stroke="BLACK" strokeType="INSIDE" width="383.0" />
-      <Label layoutX="38.0" layoutY="16.0" text="New Appointment">
+      <Label fx:id="appointmentLabel" layoutX="38.0" layoutY="16.0" text="New Appointment">
          <font>
             <Font name="System Bold" size="22.0" />
          </font>

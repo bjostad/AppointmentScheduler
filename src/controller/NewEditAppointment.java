@@ -15,20 +15,25 @@ import model.Appointment;
 import model.Contact;
 import model.Customer;
 import model.User;
+import util.Alert;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Date;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 /**
  * @author BJ Bjostad
  */
-public class NewAppointment implements Initializable {
+public class NewEditAppointment implements Initializable {
 
     Stage stage;
     Parent scene;
+    @FXML
+    private Label appointmentLabel;
     @FXML
     private TextField appointmentID;
     @FXML
@@ -52,6 +57,8 @@ public class NewAppointment implements Initializable {
     @FXML
     private ComboBox<User> user;
 
+    private boolean isNew;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -61,6 +68,8 @@ public class NewAppointment implements Initializable {
             populateCustomerComboBox();
             populateTypeComboBox();
             populateContactComboBox();
+
+            setupEditOrNew();
 
         } catch (Exception e) {
             //TODO error handling
@@ -112,7 +121,30 @@ public class NewAppointment implements Initializable {
         }
     }
 
+    private void setupEditOrNew(){
+        if(Appointments.getSelectedAppointment() != null){
 
+            appointmentLabel.setText("Edit Appointment");
+            isNew = false;
+
+            model.Appointment selectedAppointment = Appointments.getSelectedAppointment();
+            appointmentID.setText(String.valueOf(selectedAppointment.getID()));
+            //date
+            //starttime
+            //endtime
+            title.setText(selectedAppointment.getTitle());
+            description.setText(selectedAppointment.getDescription());
+            location.setText(selectedAppointment.getLocation());
+            contact.getSelectionModel().select(ContactDAOImpl.getContactByID(selectedAppointment.getContactID()));
+            type.getSelectionModel().select(selectedAppointment.getType());
+            customer.getSelectionModel().select(CustomerDAOImpl.getCustomerByID(selectedAppointment.getCustomerID()));
+            user.getSelectionModel().select(UserDAOImpl.getUser(selectedAppointment.getUserName()));
+        } else {
+            appointmentLabel.setText("New Appointment");
+            isNew = true;
+            appointmentID.setText("Will be assigned when created");
+        }
+    }
 
     @FXML
     private void returnToAppointmentsButton(ActionEvent actionEvent) throws Exception {
@@ -123,25 +155,54 @@ public class NewAppointment implements Initializable {
     @FXML
     private void onSaveButton(ActionEvent actionEvent) {
         //TODO check for existing appointment
+        //TODO check if new or edit and adjust appropriately
         try{
-            Appointment createdAppointment = new Appointment( -1,
+            model.Appointment createdAppointment = new model.Appointment(
+                    determineAppID(),
                     title.getText(),
                     description.getText(),
                     location.getText(),
                     type.getSelectionModel().getSelectedItem(),
-                    LocalDateTime.now(),
-                    LocalDateTime.now(),
+                    getStartDateTime(),
+                    getEndDateTime(),
                     customer.getSelectionModel().getSelectedItem().getID(),
                     customer.getSelectionModel().getSelectedItem().getName(),
                     user.getSelectionModel().getSelectedItem().getID(),
                     user.getSelectionModel().getSelectedItem().getUsername(),
                     contact.getSelectionModel().getSelectedItem().getID(),
-                    contact.getSelectionModel().getSelectedItem().getName()
-            );
-            AppointmentDAOImpl.addAppointment(createdAppointment);
+                    contact.getSelectionModel().getSelectedItem().getName());
+            if (isNew){
+                AppointmentDAOImpl.addAppointment(createdAppointment);
+            } else {
+                AppointmentDAOImpl.updateAppointment(createdAppointment);
+            }
+
         } catch (Exception e){
             System.out.println(e);
         }
+    }
+
+    private int determineAppID(){
+        if (!isNew){
+            return Integer.parseInt(appointmentID.getText());
+        }
+        return 0;
+    }
+
+    private LocalDateTime getStartDateTime(){
+        String selectedStartDateTime = Date.valueOf(date.getValue()) +" "+ startTime.getText();
+        DateTimeFormatter formatDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime startDateTime = LocalDateTime.parse(selectedStartDateTime, formatDateTime);
+        System.out.println(startDateTime);
+        return startDateTime;
+    }
+
+    private LocalDateTime getEndDateTime(){
+        String selectedStartDateTime = Date.valueOf(date.getValue()) +" "+ endTime.getText();
+        DateTimeFormatter formatDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime endDateTime = LocalDateTime.parse(selectedStartDateTime, formatDateTime);
+        System.out.println(endDateTime);
+        return endDateTime;
     }
 
     private void changeScene (ActionEvent actionEvent, String sceneName){

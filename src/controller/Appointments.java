@@ -53,7 +53,7 @@ public class Appointments implements Initializable {
     @FXML
     private TableColumn<Appointment, Integer> userIdColumn;
     @FXML
-    private TableView appointmentTable;
+    private TableView<Appointment> appointmentTable;
 
     private static Appointment selectedAppointment = null;
 
@@ -96,12 +96,7 @@ public class Appointments implements Initializable {
 
     @FXML
     private void onAppointmentSelected(MouseEvent mouseEvent) {
-        try{
-            selectedAppointment = (Appointment) appointmentTable.getSelectionModel().getSelectedItem();
-        } catch (Exception e) {
-            //TODO error handling
-            System.out.println(e);
-        }
+        //TODO remove along with fxml element
     }
 
     private void changeScene (ActionEvent actionEvent, String sceneName){
@@ -120,8 +115,9 @@ public class Appointments implements Initializable {
     @FXML
     private void onNewAppointmentButton(ActionEvent actionEvent) {
         try {
+            selectedAppointment = null;
             DBConnection.closeConnection();
-            changeScene( actionEvent, "NewAppointment");
+            changeScene( actionEvent, "NewEditAppointment");
 
         } catch (Exception e) {
             //TODO error handling
@@ -131,17 +127,23 @@ public class Appointments implements Initializable {
 
     @FXML
     private void onEditAppointmentButton(ActionEvent actionEvent) {
-        if (appointmentTable.getSelectionModel().getSelectedItem() != null) {
-            try {
-                DBConnection.closeConnection();
-                changeScene( actionEvent, "EditAppointment");
+        try{
+            selectedAppointment = (Appointment) appointmentTable.getSelectionModel().getSelectedItem();
+            if (appointmentTable.getSelectionModel().getSelectedItem() != null) {
+                try {
+                    DBConnection.closeConnection();
+                    changeScene( actionEvent, "NewEditAppointment");
 
-            } catch (Exception e) {
-                //TODO error handling
-                System.out.println(e);
+                } catch (Exception e) {
+                    //TODO error handling
+                    System.out.println(e);
+                }
+            } else {
+                Alert.warn("Invalid Selection","Invalid Selection","Please select an appointment.");
             }
-        } else {
-            Alert.warn("Invalid Selection","Invalid Selection","Please select an appointment.");
+        } catch (Exception e) {
+            //TODO error handling
+            System.out.println(e);
         }
     }
 
