@@ -19,6 +19,11 @@ public class User {
         this.password = password;
     }
 
+    @Override
+    public String toString(){
+        return this.username;
+    }
+
     /**
      * password getter
      * @return
@@ -33,6 +38,14 @@ public class User {
      */
     public String getUsername() {
         return username;
+    }
+
+    /**
+     * userID getter
+     * @return
+     */
+    public int getID() {
+        return ID;
     }
 
 }

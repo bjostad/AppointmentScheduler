@@ -84,7 +84,8 @@ public class Login implements Initializable {
                 util.Alert.warn(language.getString("loginTitle"),language.getString("loginHeader"),language.getString("loginContent"));
             }
         } catch (SQLException e) {
-
+            //TODO error handling
+            System.out.println(e);
         }
     }
 

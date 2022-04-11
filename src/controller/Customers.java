@@ -77,7 +77,7 @@ public class Customers implements Initializable {
 
     private void populateCustomerTable() {
         try {
-            ObservableList<Customer> customers = CustomerDAOImpl.getAllCustomer();
+            ObservableList<Customer> customers = CustomerDAOImpl.getAllCustomers();
             System.out.println("customer"+ customers);
             customerTable.setItems(customers);
             idColumn.setCellValueFactory(new PropertyValueFactory<>("ID"));
@@ -98,6 +98,7 @@ public class Customers implements Initializable {
             country.setItems(CustomerDAOImpl.getAllCountries());
         } catch (SQLException e) {
             //TODO real error handling
+            System.out.println(e);
         }
     }
 
@@ -134,9 +135,16 @@ public class Customers implements Initializable {
         try{
             String divisionName = (String)firstLevelDivision.getSelectionModel().getSelectedItem();
             int divisionID = CustomerDAOImpl.getDivisionID(divisionName);
-            Customer updatedCustomer = new Customer(Integer.parseInt(customerID.getText()),customerName.getText(),
-                    address.getText(),postalCode.getText(),phoneNumber.getText(),
-                    divisionID,divisionName,0,null);
+            Customer updatedCustomer = new Customer(Integer.parseInt(customerID.getText()),
+                                                    customerName.getText(),
+                                                    address.getText(),
+                                                    postalCode.getText(),
+                                                    phoneNumber.getText(),
+                                                    divisionID,
+                                                    divisionName,
+                                                    0,
+                                                    null);
+
             CustomerDAOImpl.updateCustomer(updatedCustomer);
             populateCustomerTable();
 
@@ -151,9 +159,14 @@ public class Customers implements Initializable {
         try {
             String divisionName = (String)firstLevelDivision.getSelectionModel().getSelectedItem();
             int divisionID = CustomerDAOImpl.getDivisionID(divisionName);
-            Customer newCustomer = new Customer(0,customerName.getText(),
-                    address.getText(),postalCode.getText(),phoneNumber.getText(),
-                    divisionID,divisionName,0,null);
+            Customer newCustomer = new Customer(0,
+                                                customerName.getText(),
+                                                address.getText(),
+                                                postalCode.getText(),
+                                                phoneNumber.getText(),
+                                                divisionID, divisionName,
+                                                0,
+                                                null);
             CustomerDAOImpl.createNewCustomer(newCustomer);
             populateCustomerTable();
         } catch (Exception e){

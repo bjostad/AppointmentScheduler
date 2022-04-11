@@ -1,5 +1,7 @@
 package DAO;
 
+import controller.Appointments;
+import controller.Login;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.Appointment;
@@ -43,6 +45,31 @@ public class AppointmentDAOImpl {
                     userID,userName,contactID,contactName));
         }
         return appointments;
+    }
+
+    public static boolean addAppointment(Appointment appointment){
+        try{
+            String createCustomerSQL = "INSERT INTO APPOINTMENTS(TITLE,DESCRIPTION,LOCATION,TYPE," +
+                                       "START,END,CREATE_DATE,CREATED_BY,LAST_UPDATE,LAST_UPDATED_BY," +
+                                       "CUSTOMER_ID,USER_ID,CONTACT_ID) " +
+                                       "VALUES(?,?,?,?,now(),now(),now(),?,now(),?,?,?,?)";
+            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(createCustomerSQL);
+            pStatement.setString(1, appointment.getTitle());
+            pStatement.setString(2, appointment.getDescription());
+            pStatement.setString(3, appointment.getLocation());
+            pStatement.setString(4,appointment.getType());
+            pStatement.setString(5, Login.currentUser.getUsername());
+            pStatement.setString(6, Login.currentUser.getUsername());
+            pStatement.setInt(7,appointment.getCustomerID());
+            pStatement.setInt(8,appointment.getUserID());
+            pStatement.setInt(9,appointment.getContactID());
+            pStatement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            //TODO error handling
+            System.out.println(e);
+        }
+        return false;
     }
 
     public static boolean deleteAppointment(int appointmentID) {

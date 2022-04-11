@@ -8,21 +8,26 @@ public class Contact {
     public String name;
     public String email;
 
-    private Contact(int ID, String name, String email) {
+    public Contact(int ID, String name, String email) {
         this.ID = ID;
         this.name = name;
         this.email = email;
     }
 
-    private int getID() {
+    @Override
+    public String toString(){
+        return this.name;
+    }
+
+    public int getID() {
         return ID;
     }
 
-    private String getName() {
+    public String getName() {
         return name;
     }
 
-    private String getEmail() {
+    public String getEmail() {
         return email;
     }
 }

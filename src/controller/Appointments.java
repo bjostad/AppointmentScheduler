@@ -151,6 +151,7 @@ public class Appointments implements Initializable {
             if (Alert.confirm("Delete Appointment","Delete Appointment","Are you sure?")){
                 try {
                     if(AppointmentDAOImpl.deleteAppointment(selectedAppointment.getID())){
+                        //TODO add type to message
                         Alert.info("Appointment Deleted", "Appointment Deleted Successfully","Appointment "+selectedAppointment.getID()+" has been deleted.");
                     }
                     populateAppointmentTable();

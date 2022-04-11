@@ -15,26 +15,32 @@ import java.sql.SQLException;
  */
 public class CustomerDAOImpl {
 
-    public static ObservableList<Customer> getAllCustomer() throws SQLException {
-        ObservableList<Customer> customers = FXCollections.observableArrayList();
-        String getAllCustomersSQL = "SELECT * FROM CUSTOMERS " +
-                "LEFT JOIN FIRST_LEVEL_DIVISIONS ON CUSTOMERS.DIVISION_ID = FIRST_LEVEL_DIVISIONS.DIVISION_ID " +
-                "LEFT JOIN COUNTRIES ON FIRST_LEVEL_DIVISIONS.COUNTRY_ID = COUNTRIES.COUNTRY_ID";
-        PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getAllCustomersSQL);
-        ResultSet results = pStatement.executeQuery();
-        while(results.next()){
-            int ID = results.getInt("Customer_ID");
-            String name = results.getString("Customer_Name");
-            String address = results.getString("Address");
-            String postalCode = results.getString("Postal_Code");
-            String phoneNumber = results.getString("Phone");
-            int divisionID = results.getInt("Division_ID");
-            String division = results.getString("Division");
-            int countryID = results.getInt("Country_ID");
-            String country = results.getString("Country");
-            customers.add(new Customer(ID,name,address,postalCode,phoneNumber,divisionID,division,countryID,country));
+    public static ObservableList<Customer> getAllCustomers(){
+        try{
+            ObservableList<Customer> customers = FXCollections.observableArrayList();
+            String getAllCustomersSQL = "SELECT * FROM CUSTOMERS " +
+                    "LEFT JOIN FIRST_LEVEL_DIVISIONS ON CUSTOMERS.DIVISION_ID = FIRST_LEVEL_DIVISIONS.DIVISION_ID " +
+                    "LEFT JOIN COUNTRIES ON FIRST_LEVEL_DIVISIONS.COUNTRY_ID = COUNTRIES.COUNTRY_ID";
+            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getAllCustomersSQL);
+            ResultSet results = pStatement.executeQuery();
+            while(results.next()){
+                int ID = results.getInt("Customer_ID");
+                String name = results.getString("Customer_Name");
+                String address = results.getString("Address");
+                String postalCode = results.getString("Postal_Code");
+                String phoneNumber = results.getString("Phone");
+                int divisionID = results.getInt("Division_ID");
+                String division = results.getString("Division");
+                int countryID = results.getInt("Country_ID");
+                String country = results.getString("Country");
+                customers.add(new Customer(ID,name,address,postalCode,phoneNumber,divisionID,division,countryID,country));
+            }
+            return customers;
+        } catch (SQLException e) {
+            //TODO Error handling
+            System.out.println(e);
         }
-        return customers;
+        return null;
     }
 
     public static ObservableList<String> getAllCountries() throws SQLException {
@@ -123,7 +129,9 @@ public class CustomerDAOImpl {
 
     public static boolean createNewCustomer(Customer customer){
         try{
-            String createCustomerSQL = "INSERT INTO CUSTOMERS(CUSTOMER_NAME,ADDRESS,POSTAL_CODE,PHONE,CREATE_DATE,CREATED_BY,LAST_UPDATE,LAST_UPDATED_BY,DIVISION_ID) VALUES(?,?,?,?,NOW(),?,NOW(),?,?)";
+            String createCustomerSQL = "INSERT INTO CUSTOMERS(CUSTOMER_NAME,ADDRESS,POSTAL_CODE,PHONE," +
+                                       "CREATE_DATE,CREATED_BY,LAST_UPDATE,LAST_UPDATED_BY,DIVISION_ID) " +
+                                       "VALUES(?,?,?,?,NOW(),?,NOW(),?,?)";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(createCustomerSQL);
             pStatement.setString(1,customer.getName());
             pStatement.setString(2,customer.getAddress());
