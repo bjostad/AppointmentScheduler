@@ -57,7 +57,7 @@ public class Login implements Initializable {
      */
     @FXML
     private void onExitButton(ActionEvent actionEvent) throws Exception {
-        if (util.Alert.confirm(language.getString("exitTitle"),language.getString("exitHeader"),language.getString("exitContent"))) {
+        if (utils.Alert.confirm(language.getString("exitTitle"),language.getString("exitHeader"),language.getString("exitContent"))) {
             //close DB connection before exit
             DBConnection.closeConnection();
             System.exit(0);
@@ -83,7 +83,7 @@ public class Login implements Initializable {
                 DBConnection.closeConnection();
                 changeScene(actionEvent, "Appointments");
             } else {
-                util.Alert.warn(language.getString("loginTitle"),language.getString("loginHeader"),language.getString("loginContent"));
+                utils.Alert.warn(language.getString("loginTitle"),language.getString("loginHeader"),language.getString("loginContent"));
             }
         } catch (SQLException e) {
             //TODO error handling

@@ -2,7 +2,6 @@ package controller;
 
 import DAO.AppointmentDAO;
 import DAO.AppointmentDAOImpl;
-import DAO.CustomerDAOImpl;
 import DAO.DBConnection;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,11 +17,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.Appointment;
-import util.Alert;
+import utils.Alert;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
@@ -196,7 +194,7 @@ public class Appointments implements Initializable {
 
     @FXML
     private void onExitButton(ActionEvent actionEvent) throws Exception {
-        if (util.Alert.confirm("Exit","Close Application","Are you sure you want to close the application?")) {
+        if (utils.Alert.confirm("Exit","Close Application","Are you sure you want to close the application?")) {
             //close DB connection before exit
             DBConnection.closeConnection();
             System.exit(0);
