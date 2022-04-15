@@ -108,6 +108,17 @@ public class Appointments implements Initializable {
     }
 
     @FXML
+    private void onAppointmentSelected(MouseEvent mouseEvent) {
+        try{
+            selectedAppointment = (Appointment) appointmentTable.getSelectionModel().getSelectedItem();
+        } catch (Exception e) {
+            //TODO error handling
+            System.out.println(e);
+        }
+        //TODO remove along with fxml element
+    }
+
+    @FXML
     private void onNewAppointmentButton(ActionEvent actionEvent) {
         try {
             selectedAppointment = null;
@@ -149,7 +160,10 @@ public class Appointments implements Initializable {
                 try {
                     if(AppointmentDAOImpl.deleteAppointment(selectedAppointment.getID())){
                         //TODO add type to message
-                        Alert.info("Appointment Deleted", "Appointment Deleted Successfully","Appointment "+selectedAppointment.getID()+" has been deleted.");
+                        Alert.info("Appointment Deleted",
+                                "Appointment Deleted Successfully",
+                                "Appointment "+selectedAppointment.getID()+
+                                        " with type "+selectedAppointment.getType()+" has been deleted.");
                     }
                     populateAppointmentTable();
                 } catch (Exception e){

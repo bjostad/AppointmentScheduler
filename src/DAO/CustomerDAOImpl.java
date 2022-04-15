@@ -33,7 +33,9 @@ public class CustomerDAOImpl {
                 String division = results.getString("Division");
                 int countryID = results.getInt("Country_ID");
                 String country = results.getString("Country");
-                customers.add(new Customer(ID,name,address,postalCode,phoneNumber,divisionID,division,countryID,country));
+                customers.add(new Customer(ID,
+                        name,address,postalCode,phoneNumber,
+                        divisionID,division,countryID,country));
             }
             return customers;
         } catch (SQLException e) {

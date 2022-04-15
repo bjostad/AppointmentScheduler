@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -22,7 +23,10 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) throws Exception {
+        //Uncomment line below to test french locale
         //Locale.setDefault(new Locale("fr"));
+        //TODO remove date below
+        System.out.println(new Date());
         launch(args);
     }
 }
