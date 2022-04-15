@@ -29,21 +29,21 @@ public class Customers implements Initializable {
     Stage stage;
     Parent scene;
     @FXML
-    private TableView customerTable;
+    private TableView<Customer> customerTable;
     @FXML
-    private TableColumn idColumn;
+    private TableColumn<Customer, Integer> idColumn;
     @FXML
-    private TableColumn nameColumn;
+    private TableColumn<Customer, String> nameColumn;
     @FXML
-    private TableColumn phoneNumberColumn;
+    private TableColumn<Customer, String> phoneNumberColumn;
     @FXML
-    private TableColumn addressColumn;
+    private TableColumn<Customer, String> addressColumn;
     @FXML
-    private TableColumn postalCodeColumn;
+    private TableColumn<Customer, String> postalCodeColumn;
     @FXML
-    private TableColumn countryColumn;
+    private TableColumn<Customer, String> countryColumn;
     @FXML
-    private TableColumn firstLevelDivisionColumn;
+    private TableColumn<Customer, String> firstLevelDivisionColumn;
     @FXML
     private TextField customerID;
     @FXML
@@ -55,17 +55,16 @@ public class Customers implements Initializable {
     @FXML
     private TextField postalCode;
     @FXML
-    private Button onSaveCustomerButton;
+    private Button createNewCustomerButton;
     @FXML
-    private Button onCreateNewCustomerButton;
+    private Button saveButton;
     @FXML
-    private Button onDeleteCustomerButton;
+    private ComboBox<String> country;
     @FXML
-    private ComboBox country;
-    @FXML
-    private ComboBox firstLevelDivision;
+    private ComboBox<String> firstLevelDivision;
 
     CustomerDAO customerDAO = new CustomerDAOImpl();
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -126,6 +125,8 @@ public class Customers implements Initializable {
             postalCode.setText(selectedCustomer.getPostalCode());
             country.getSelectionModel().select(selectedCustomer.getCountry());
             firstLevelDivision.getSelectionModel().select(selectedCustomer.getDivision());
+            saveButton.setText("Update Customer");
+
         } catch (Exception e){
             //TODO actual error handling
             System.out.println(e);
@@ -138,19 +139,30 @@ public class Customers implements Initializable {
         try{
             String divisionName = (String)firstLevelDivision.getSelectionModel().getSelectedItem();
             int divisionID = customerDAO.getDivisionID(divisionName);
-            Customer updatedCustomer = new Customer(Integer.parseInt(customerID.getText()),
-                                                    customerName.getText(),
-                                                    address.getText(),
-                                                    postalCode.getText(),
-                                                    phoneNumber.getText(),
-                                                    divisionID,
-                                                    divisionName,
-                                                    0,
-                                                    null);
-
-            customerDAO.updateCustomer(updatedCustomer);
+            if(customerID.getText().charAt(0) == 'W'){
+                Customer customer = new Customer(0,
+                        customerName.getText(),
+                        address.getText(),
+                        postalCode.getText(),
+                        phoneNumber.getText(),
+                        divisionID,
+                        divisionName,
+                        0,
+                        null);
+                customerDAO.createNewCustomer(customer);
+            } else {
+                Customer customer = new Customer(Integer.parseInt(customerID.getText()),
+                        customerName.getText(),
+                        address.getText(),
+                        postalCode.getText(),
+                        phoneNumber.getText(),
+                        divisionID,
+                        divisionName,
+                        0,
+                        null);
+                customerDAO.updateCustomer(customer);
+            }
             populateCustomerTable();
-
         } catch (Exception e){
             //TODO error handling
             System.out.println(e);
@@ -158,24 +170,15 @@ public class Customers implements Initializable {
     }
 
     @FXML
-    private void onCreateNewCustomerButton(ActionEvent actionEvent) {
-        try {
-            String divisionName = (String)firstLevelDivision.getSelectionModel().getSelectedItem();
-            int divisionID = customerDAO.getDivisionID(divisionName);
-            Customer newCustomer = new Customer(0,
-                                                customerName.getText(),
-                                                address.getText(),
-                                                postalCode.getText(),
-                                                phoneNumber.getText(),
-                                                divisionID, divisionName,
-                                                0,
-                                                null);
-            customerDAO.createNewCustomer(newCustomer);
-            populateCustomerTable();
-        } catch (Exception e){
-            //TODO error handling
-            System.out.println(e);
-        }
+    private void onNewCustomerButton(ActionEvent actionEvent) {
+        customerID.setText("Will be assigned when created");
+        customerName.setText("");
+        phoneNumber.setText("");
+        address.setText("");
+        postalCode.setText("");
+        country.getSelectionModel().clearSelection();
+        firstLevelDivision.getSelectionModel().clearSelection();
+        saveButton.setText("Create New Customer");
     }
 
     @FXML
@@ -183,6 +186,7 @@ public class Customers implements Initializable {
         //TODO check for appointments under customer, do not delete customer if appointments exist
         try {
             customerDAO.deleteCustomer(customerID.getText());
+            onNewCustomerButton(actionEvent);
             populateCustomerTable();
         } catch (Exception e){
             //TODO error handling

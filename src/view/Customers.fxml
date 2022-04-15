@@ -43,11 +43,11 @@
       <TextField fx:id="phoneNumber" layoutX="1031.0" layoutY="231.0" prefHeight="25.0" prefWidth="212.0" />
       <TextField fx:id="address" layoutX="1031.0" layoutY="269.0" prefHeight="25.0" prefWidth="212.0" />
       <TextField fx:id="postalCode" layoutX="1031.0" layoutY="307.0" prefHeight="25.0" prefWidth="212.0" />
-      <Button layoutX="911.0" layoutY="431.0" mnemonicParsing="false" onAction="#onSaveCustomerButton" prefHeight="52.0" prefWidth="362.0" text="Save Changes">
+      <Button fx:id="saveButton" layoutX="911.0" layoutY="431.0" mnemonicParsing="false" onAction="#onSaveCustomerButton" prefHeight="52.0" prefWidth="362.0" text="Save Changes">
          <font>
             <Font size="16.0" />
          </font></Button>
-      <Button layoutX="908.0" layoutY="56.0" mnemonicParsing="false" onAction="#onCreateNewCustomerButton" prefHeight="44.0" prefWidth="362.0" text="Create New Customer">
+      <Button fx:id="NewCustomerButton" layoutX="908.0" layoutY="56.0" mnemonicParsing="false" onAction="#onNewCustomerButton" prefHeight="44.0" prefWidth="362.0" text="New Customer">
          <font>
             <Font size="16.0" />
          </font></Button>
