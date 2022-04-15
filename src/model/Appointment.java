@@ -83,4 +83,13 @@ public class Appointment {
     public String getUserName() {
         return userName;
     }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public String getContactName(){
+        return contactName;
+    }
+
 }
