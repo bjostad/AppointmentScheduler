@@ -11,11 +11,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import model.Appointment;
 import model.Contact;
 import model.Customer;
 import model.User;
-import util.Alert;
+import utils.Alert;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,7 +22,6 @@ import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 /**
  * @author BJ Bjostad
@@ -220,7 +218,7 @@ public class NewEditAppointment implements Initializable {
 
     @FXML
     private void returnToAppointmentsButton(ActionEvent actionEvent) throws Exception {
-        if (util.Alert.confirm("Return",
+        if (utils.Alert.confirm("Return",
                 "Return to Appointments Menu",
                 "Are you sure you want to return to the Appointments menu with saving?")) {
             DBConnection.closeConnection();

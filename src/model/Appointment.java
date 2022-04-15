@@ -80,7 +80,15 @@ public class Appointment {
         return contactID;
     }
 
+    public String getCustomerName() {
+        return customerName;
+    }
+
     public String getUserName() {
         return userName;
+    }
+
+    public String getContactName() {
+        return contactName;
     }
 }
