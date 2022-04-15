@@ -9,9 +9,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserDAOImpl {
+public class UserDAOImpl implements UserDAO {
 
-    public static User getUser(String loginUsername) {
+    @Override
+    public User getUser(String loginUsername) {
         User foundUser;
         try{
             String getUserSQL = "SELECT * FROM users WHERE User_Name = ?";
@@ -32,7 +33,8 @@ public class UserDAOImpl {
         return null;
     }
 
-    public static ObservableList<User> getAllUsers(){
+    @Override
+    public ObservableList<User> getAllUsers(){
         try{
             ObservableList<User> users = FXCollections.observableArrayList();
             String getAllUsersSQL = "SELECT * FROM USERS";
@@ -51,8 +53,8 @@ public class UserDAOImpl {
         return null;
     }
 
-
-    public static int getUserIDFromUserName(String userName){
+    @Override
+    public int getUserIDFromUserName(String userName){
         try{
             String getUserIDFromUserNameSQL = "SELECT USER_ID FROM USERS WHERE USER_NAME = ?";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getUserIDFromUserNameSQL);

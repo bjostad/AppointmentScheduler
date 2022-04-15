@@ -1,5 +1,6 @@
 package controller;
 
+import DAO.CustomerDAO;
 import DAO.CustomerDAOImpl;
 import DAO.DBConnection;
 import javafx.collections.ObservableList;
@@ -64,6 +65,8 @@ public class Customers implements Initializable {
     @FXML
     private ComboBox firstLevelDivision;
 
+    CustomerDAO customerDAO = new CustomerDAOImpl();
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -77,7 +80,7 @@ public class Customers implements Initializable {
 
     private void populateCustomerTable() {
         try {
-            ObservableList<Customer> customers = CustomerDAOImpl.getAllCustomers();
+            ObservableList<Customer> customers = customerDAO.getAllCustomers();
             System.out.println("customer"+ customers);
             customerTable.setItems(customers);
             idColumn.setCellValueFactory(new PropertyValueFactory<>("ID"));
@@ -95,8 +98,8 @@ public class Customers implements Initializable {
 
     private void populateCountryComboBox() {
         try {
-            country.setItems(CustomerDAOImpl.getAllCountries());
-        } catch (SQLException e) {
+            country.setItems(customerDAO.getAllCountries());
+        } catch (Exception e) {
             //TODO real error handling
             System.out.println(e);
         }
@@ -106,7 +109,7 @@ public class Customers implements Initializable {
     private void onCountrySelected(ActionEvent actionEvent) {
         try {
             String country = (String)this.country.getSelectionModel().getSelectedItem();
-            firstLevelDivision.setItems((CustomerDAOImpl.getCountryDivisions(country)));
+            firstLevelDivision.setItems((customerDAO.getCountryDivisions(country)));
         } catch (Exception e){
             //TODO error handling
         }
@@ -134,7 +137,7 @@ public class Customers implements Initializable {
     private void onSaveCustomerButton(ActionEvent actionEvent) {
         try{
             String divisionName = (String)firstLevelDivision.getSelectionModel().getSelectedItem();
-            int divisionID = CustomerDAOImpl.getDivisionID(divisionName);
+            int divisionID = customerDAO.getDivisionID(divisionName);
             Customer updatedCustomer = new Customer(Integer.parseInt(customerID.getText()),
                                                     customerName.getText(),
                                                     address.getText(),
@@ -145,7 +148,7 @@ public class Customers implements Initializable {
                                                     0,
                                                     null);
 
-            CustomerDAOImpl.updateCustomer(updatedCustomer);
+            customerDAO.updateCustomer(updatedCustomer);
             populateCustomerTable();
 
         } catch (Exception e){
@@ -158,7 +161,7 @@ public class Customers implements Initializable {
     private void onCreateNewCustomerButton(ActionEvent actionEvent) {
         try {
             String divisionName = (String)firstLevelDivision.getSelectionModel().getSelectedItem();
-            int divisionID = CustomerDAOImpl.getDivisionID(divisionName);
+            int divisionID = customerDAO.getDivisionID(divisionName);
             Customer newCustomer = new Customer(0,
                                                 customerName.getText(),
                                                 address.getText(),
@@ -167,7 +170,7 @@ public class Customers implements Initializable {
                                                 divisionID, divisionName,
                                                 0,
                                                 null);
-            CustomerDAOImpl.createNewCustomer(newCustomer);
+            customerDAO.createNewCustomer(newCustomer);
             populateCustomerTable();
         } catch (Exception e){
             //TODO error handling
@@ -179,7 +182,7 @@ public class Customers implements Initializable {
     private void onDeleteCustomerButton(ActionEvent actionEvent) {
         //TODO check for appointments under customer, do not delete customer if appointments exist
         try {
-            CustomerDAOImpl.deleteCustomer(customerID.getText());
+            customerDAO.deleteCustomer(customerID.getText());
             populateCustomerTable();
         } catch (Exception e){
             //TODO error handling

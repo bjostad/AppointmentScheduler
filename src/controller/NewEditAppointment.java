@@ -59,6 +59,11 @@ public class NewEditAppointment implements Initializable {
 
     private boolean isNew;
 
+    UserDAO userDAO = new UserDAOImpl();
+    ContactDAO contactDAO = new ContactDAOImpl();
+    CustomerDAO customerDAO = new CustomerDAOImpl();
+    AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -80,7 +85,7 @@ public class NewEditAppointment implements Initializable {
 
     private void populateUserComboBox() {
         try {
-            user.setItems(UserDAOImpl.getAllUsers());
+            user.setItems(userDAO.getAllUsers());
         } catch (Exception e) {
             //TODO real error handling
             System.out.println(e);
@@ -89,7 +94,7 @@ public class NewEditAppointment implements Initializable {
 
     private void populateCustomerComboBox() {
         try {
-            customer.setItems(CustomerDAOImpl.getAllCustomers());
+            customer.setItems(customerDAO.getAllCustomers());
         } catch (Exception e) {
             //TODO real error handling
             System.out.println(e);
@@ -98,7 +103,7 @@ public class NewEditAppointment implements Initializable {
 
     private void populateContactComboBox() {
         try {
-            contact.setItems(ContactDAOImpl.getAllContacts());
+            contact.setItems(contactDAO.getAllContacts());
         } catch (Exception e) {
             //TODO real error handling
             System.out.println(e);
@@ -135,10 +140,10 @@ public class NewEditAppointment implements Initializable {
             title.setText(selectedAppointment.getTitle());
             description.setText(selectedAppointment.getDescription());
             location.setText(selectedAppointment.getLocation());
-            contact.getSelectionModel().select(ContactDAOImpl.getContactByID(selectedAppointment.getContactID()));
+            contact.getSelectionModel().select(contactDAO.getContactByID(selectedAppointment.getContactID()));
             type.getSelectionModel().select(selectedAppointment.getType());
-            customer.getSelectionModel().select(CustomerDAOImpl.getCustomerByID(selectedAppointment.getCustomerID()));
-            user.getSelectionModel().select(UserDAOImpl.getUser(selectedAppointment.getUserName()));
+            customer.getSelectionModel().select(customerDAO.getCustomerByID(selectedAppointment.getCustomerID()));
+            user.getSelectionModel().select(userDAO.getUser(selectedAppointment.getUserName()));
         } else {
             appointmentLabel.setText("New Appointment");
             isNew = true;
@@ -180,9 +185,9 @@ public class NewEditAppointment implements Initializable {
                     contact.getSelectionModel().getSelectedItem().getID(),
                     contact.getSelectionModel().getSelectedItem().getName());
             if (isNew){
-                AppointmentDAOImpl.addAppointment(createdAppointment);
+                appointmentDAO.addAppointment(createdAppointment);
             } else {
-                AppointmentDAOImpl.updateAppointment(createdAppointment);
+                appointmentDAO.updateAppointment(createdAppointment);
             }
         } catch (Exception e){
             //TODO capture and alert proper invalid entries

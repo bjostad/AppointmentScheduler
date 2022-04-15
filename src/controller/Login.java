@@ -1,6 +1,7 @@
 package controller;
 
 import DAO.DBConnection;
+import DAO.UserDAO;
 import DAO.UserDAOImpl;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -46,6 +47,7 @@ public class Login implements Initializable {
     private Label titleLabel;
 
     private ResourceBundle language = ResourceBundle.getBundle("resources/language",Locale.getDefault());
+    UserDAO userDAO = new UserDAOImpl();
 
     public static User currentUser = null;
 
@@ -72,7 +74,7 @@ public class Login implements Initializable {
     private void onLogInButton(ActionEvent actionEvent) throws SQLException, Exception {
         String loginUserPassword = null;
         try{
-            User loginUser = UserDAOImpl.getUser(usernameText.getText());
+            User loginUser = userDAO.getUser(usernameText.getText());
             if (loginUser != null){
                 loginUserPassword = loginUser.getPassword();
             }

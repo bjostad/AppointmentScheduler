@@ -1,5 +1,6 @@
 package controller;
 
+import DAO.AppointmentDAO;
 import DAO.AppointmentDAOImpl;
 import DAO.CustomerDAOImpl;
 import DAO.DBConnection;
@@ -55,6 +56,8 @@ public class Appointments implements Initializable {
     @FXML
     private TableView<Appointment> appointmentTable;
 
+    AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
+
     private static Appointment selectedAppointment = null;
 
     @Override
@@ -75,7 +78,7 @@ public class Appointments implements Initializable {
 
     private void populateAppointmentTable(){
         try{
-            ObservableList<Appointment> appointments = AppointmentDAOImpl.getAllAppointments();
+            ObservableList<Appointment> appointments = appointmentDAO.getAllAppointments();
             System.out.println(appointments);
             appointmentTable.setItems(appointments);
             appointmentIdColumn.setCellValueFactory(new PropertyValueFactory<>("ID"));
@@ -158,7 +161,7 @@ public class Appointments implements Initializable {
         if (appointmentTable.getSelectionModel().getSelectedItem() != null) {
             if (Alert.confirm("Delete Appointment","Delete Appointment","Are you sure?")){
                 try {
-                    if(AppointmentDAOImpl.deleteAppointment(selectedAppointment.getID())){
+                    if(appointmentDAO.deleteAppointment(selectedAppointment.getID())){
                         //TODO add type to message
                         Alert.info("Appointment Deleted",
                                 "Appointment Deleted Successfully",

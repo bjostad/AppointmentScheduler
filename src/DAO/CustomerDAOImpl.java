@@ -13,9 +13,9 @@ import java.sql.SQLException;
 /**
  * @author BJ Bjostad
  */
-public class CustomerDAOImpl {
-
-    public static ObservableList<Customer> getAllCustomers(){
+public class CustomerDAOImpl implements CustomerDAO{
+    @Override
+    public ObservableList<Customer> getAllCustomers(){
         try{
             ObservableList<Customer> customers = FXCollections.observableArrayList();
             String getAllCustomersSQL = "SELECT * FROM CUSTOMERS " +
@@ -45,7 +45,8 @@ public class CustomerDAOImpl {
         return null;
     }
 
-    public static Customer getCustomerByID(int selectedCustomerID){
+    @Override
+    public Customer getCustomerByID(int selectedCustomerID){
         try{
             String getAllCustomerByIDSQL = "SELECT * FROM CUSTOMERS " +
                     "LEFT JOIN FIRST_LEVEL_DIVISIONS ON CUSTOMERS.DIVISION_ID = FIRST_LEVEL_DIVISIONS.DIVISION_ID " +
@@ -73,18 +74,25 @@ public class CustomerDAOImpl {
         return null;
     }
 
-    public static ObservableList<String> getAllCountries() throws SQLException {
+    @Override
+    public ObservableList<String> getAllCountries(){
         ObservableList<String> countries = FXCollections.observableArrayList();
         String getAllCountriesSQL = "SELECT COUNTRY FROM COUNTRIES";
-        PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getAllCountriesSQL);
-        ResultSet results = pStatement.executeQuery();
-        while(results.next()){
-            countries.add(results.getString("COUNTRY"));
+        try {
+            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getAllCountriesSQL);
+            ResultSet results = pStatement.executeQuery();
+            while(results.next()){
+                countries.add(results.getString("COUNTRY"));
+            }
+        } catch (SQLException e) {
+            //TODO Error handling
+            System.out.println(e);
         }
         return countries;
     }
 
-    public static int getCountryID(String country){
+    @Override
+    public int getCountryID(String country){
         try {
           String getCountryIDSQL = "SELECT COUNTRY_ID FROM COUNTRIES WHERE COUNTRY = ?";
           PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getCountryIDSQL);
@@ -100,7 +108,8 @@ public class CustomerDAOImpl {
         return 0;
     }
 
-    public static int getDivisionID(String division){
+    @Override
+    public int getDivisionID(String division){
         try {
             String getDivisionyIDSQL = "SELECT DIVISION_ID FROM FIRST_LEVEL_DIVISIONS WHERE DIVISION = ?";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getDivisionyIDSQL);
@@ -116,7 +125,8 @@ public class CustomerDAOImpl {
         return 0;
     }
 
-    public static ObservableList<String> getCountryDivisions(String country) {
+    @Override
+    public ObservableList<String> getCountryDivisions(String country) {
         try{
             int countryID = getCountryID(country);
             ObservableList<String> divisions = FXCollections.observableArrayList();
@@ -135,7 +145,8 @@ public class CustomerDAOImpl {
         return null;
     }
 
-    public static boolean updateCustomer(Customer customer){
+    @Override
+    public boolean updateCustomer(Customer customer){
         try{
             String updateCustomerSQL = "UPDATE CUSTOMERS SET CUSTOMER_NAME=?,ADDRESS=?,POSTAL_CODE=?,PHONE=?," +
                                        "LAST_UPDATE=NOW(),LAST_UPDATED_BY=?,DIVISION_ID=? " +
@@ -159,7 +170,8 @@ public class CustomerDAOImpl {
         return false;
     }
 
-    public static boolean createNewCustomer(Customer customer){
+    @Override
+    public boolean createNewCustomer(Customer customer){
         try{
             String createCustomerSQL = "INSERT INTO CUSTOMERS(CUSTOMER_NAME,ADDRESS,POSTAL_CODE,PHONE," +
                                        "CREATE_DATE,CREATED_BY,LAST_UPDATE,LAST_UPDATED_BY,DIVISION_ID) " +
@@ -182,7 +194,8 @@ public class CustomerDAOImpl {
         return false;
     }
 
-    public static boolean deleteCustomer(String customerID){
+    @Override
+    public boolean deleteCustomer(String customerID){
         try{
             String deleteCustomerSQL = "DELETE FROM CUSTOMERS WHERE CUSTOMER_ID = ?";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(deleteCustomerSQL);

@@ -12,9 +12,10 @@ import java.sql.SQLException;
 /**
  * @author BJ Bjostad
  */
-public class ContactDAOImpl {
+public class ContactDAOImpl implements ContactDAO{
 
-    public static ObservableList<Contact> getAllContacts(){
+    @Override
+    public ObservableList<Contact> getAllContacts(){
         try{
             ObservableList<Contact> contacts = FXCollections.observableArrayList();
             String getAllContactsSQL = "SELECT * FROM CONTACTS ";
@@ -34,7 +35,8 @@ public class ContactDAOImpl {
         return null;
     }
 
-    public static Contact getContactByID(int selectedContact){
+    @Override
+    public Contact getContactByID(int selectedContact){
         try{
             String getAllContactsSQL = "SELECT * FROM CONTACTS WHERE CONTACT_ID = ? ";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getAllContactsSQL);
