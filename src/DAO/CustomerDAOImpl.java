@@ -195,11 +195,11 @@ public class CustomerDAOImpl implements CustomerDAO{
     }
 
     @Override
-    public boolean deleteCustomer(String customerID){
+    public boolean deleteCustomer(int customerID){
         try{
             String deleteCustomerSQL = "DELETE FROM CUSTOMERS WHERE CUSTOMER_ID = ?";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(deleteCustomerSQL);
-            pStatement.setString(1,(customerID));
+            pStatement.setInt(1,(customerID));
             pStatement.executeUpdate();
             return true;
 

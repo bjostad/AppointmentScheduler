@@ -219,8 +219,8 @@ public class NewEditAppointment implements Initializable {
     @FXML
     private void returnToAppointmentsButton(ActionEvent actionEvent) throws Exception {
         if (utils.Alert.confirm("Return",
-                "Return to Appointments Menu",
-                "Are you sure you want to return to the Appointments menu with saving?")) {
+                "Return to Appointments?",
+                "Are you sure you want to return to the Appointments menu without saving?")) {
             DBConnection.closeConnection();
             changeScene(actionEvent, "Appointments");
         }

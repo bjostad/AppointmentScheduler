@@ -1,8 +1,6 @@
 package controller;
 
-import DAO.CustomerDAO;
-import DAO.CustomerDAOImpl;
-import DAO.DBConnection;
+import DAO.*;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,7 +12,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import model.Appointment;
 import model.Customer;
+import utils.Alert;
 
 import java.io.IOException;
 import java.net.URL;
@@ -55,8 +55,6 @@ public class Customers implements Initializable {
     @FXML
     private TextField postalCode;
     @FXML
-    private Button createNewCustomerButton;
-    @FXML
     private Button saveButton;
     @FXML
     private ComboBox<String> country;
@@ -64,6 +62,7 @@ public class Customers implements Initializable {
     private ComboBox<String> firstLevelDivision;
 
     CustomerDAO customerDAO = new CustomerDAOImpl();
+    AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
 
 
     @Override
@@ -139,28 +138,33 @@ public class Customers implements Initializable {
         try{
             String divisionName = (String)firstLevelDivision.getSelectionModel().getSelectedItem();
             int divisionID = customerDAO.getDivisionID(divisionName);
-            if(customerID.getText().charAt(0) == 'W'){
-                Customer customer = new Customer(0,
-                        customerName.getText(),
-                        address.getText(),
-                        postalCode.getText(),
-                        phoneNumber.getText(),
-                        divisionID,
-                        divisionName,
-                        0,
-                        null);
-                customerDAO.createNewCustomer(customer);
+            boolean isNew = (customerID.getText().charAt(0) == 'W');
+            int id = 0;
+            if(!isNew){
+              id = Integer.parseInt(customerID.getText());
+            }
+            Customer customer = new Customer(id,
+                    customerName.getText(),
+                    address.getText(),
+                    postalCode.getText(),
+                    phoneNumber.getText(),
+                    divisionID,
+                    divisionName,
+                    0,
+                    null);
+            if(isNew){
+                if(Alert.confirm("Create New Customer",
+                        "Create New Customer "+customer.getName()+"?",
+                        "Are you sure you want to create a new customer?")){
+                    customerDAO.createNewCustomer(customer);
+                }
+
             } else {
-                Customer customer = new Customer(Integer.parseInt(customerID.getText()),
-                        customerName.getText(),
-                        address.getText(),
-                        postalCode.getText(),
-                        phoneNumber.getText(),
-                        divisionID,
-                        divisionName,
-                        0,
-                        null);
-                customerDAO.updateCustomer(customer);
+                if(Alert.confirm("Update Customer",
+                        "Update Customer "+customer.getName()+"?",
+                        "Are you sure you want to update?")){
+                    customerDAO.updateCustomer(customer);
+                }
             }
             populateCustomerTable();
         } catch (Exception e){
@@ -169,6 +173,10 @@ public class Customers implements Initializable {
         }
     }
 
+    /**
+     * Setup customer form for creation of a new customer
+     * @param actionEvent
+     */
     @FXML
     private void onNewCustomerButton(ActionEvent actionEvent) {
         customerID.setText("Will be assigned when created");
@@ -181,16 +189,46 @@ public class Customers implements Initializable {
         saveButton.setText("Create New Customer");
     }
 
+    /**
+     * Remove selected customer
+     * verify customer has no currently assigned appointments
+     * @param actionEvent
+     */
     @FXML
     private void onDeleteCustomerButton(ActionEvent actionEvent) {
-        //TODO check for appointments under customer, do not delete customer if appointments exist
-        try {
-            customerDAO.deleteCustomer(customerID.getText());
-            onNewCustomerButton(actionEvent);
-            populateCustomerTable();
-        } catch (Exception e){
-            //TODO error handling
-            System.out.println(e);
+        if (customerTable.getSelectionModel().getSelectedItem() != null) {
+            int hasAppts = 0;
+            String selectedCustomerName = customerTable.getSelectionModel().getSelectedItem().getName();
+            int selectedCustomerID = customerTable.getSelectionModel().getSelectedItem().getID();
+            ObservableList<Appointment> appointments = appointmentDAO.getAllAppointments();
+            for(Appointment a:appointments){
+                if(a.getCustomerID() == selectedCustomerID){
+                    hasAppts++;
+                }
+            }
+            if(hasAppts > 0) {
+                Alert.warn("Action Cancelled",
+                        "Unable To Delete "+ selectedCustomerName,
+                        "Customer "+selectedCustomerName+" has " + hasAppts + " actively assigned appointment. " +
+                                "Cancel all appointments before deleting customer.");
+            } else {
+                if (Alert.confirm("Delete Customer",
+                        "Delete Customer "+selectedCustomerName+"?",
+                        "Are you sure?")){
+                    try {
+                        customerDAO.deleteCustomer(selectedCustomerID);
+                        onNewCustomerButton(actionEvent);
+                        populateCustomerTable();
+                    } catch (Exception e){
+                        //TODO error handling
+                        System.out.println(e);
+                    }
+                }
+            }
+        } else {
+            Alert.warn("Invalid Selection",
+                    "Invalid Selection",
+                    "Please select a Customer.");
         }
     }
 
@@ -209,7 +247,11 @@ public class Customers implements Initializable {
 
     @FXML
     private void returnToAppointmentsButton(ActionEvent actionEvent) throws Exception {
-        DBConnection.closeConnection();
-        changeScene(actionEvent,"Appointments");
+        if (Alert.confirm("Return",
+                "Return to Appointments?",
+                "Are you sure you want to return to the Appointment menu?")){
+            DBConnection.closeConnection();
+            changeScene(actionEvent,"Appointments");
+        }
     }
 }

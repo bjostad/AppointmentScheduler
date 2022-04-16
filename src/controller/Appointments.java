@@ -173,7 +173,9 @@ public class Appointments implements Initializable {
                 }
             }
         } else {
-            Alert.warn("Invalid Selection","Invalid Selection","Please select an appointment.");
+            Alert.warn("Invalid Selection",
+                    "Invalid Selection",
+                    "Please select an appointment.");
         }
     }
 

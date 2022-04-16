@@ -15,5 +15,5 @@ public interface CustomerDAO {
     public ObservableList<String> getCountryDivisions(String country);
     public boolean updateCustomer(Customer customer);
     public boolean createNewCustomer(Customer customer);
-    public boolean deleteCustomer(String customerID);
+    public boolean deleteCustomer(int customerID);
 }
