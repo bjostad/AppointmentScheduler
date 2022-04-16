@@ -64,7 +64,12 @@ public class Customers implements Initializable {
     CustomerDAO customerDAO = new CustomerDAOImpl();
     AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
 
-
+    /**
+     * initialize customers scene
+     * populate customer table and country combobox for use
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -76,6 +81,9 @@ public class Customers implements Initializable {
         }
     }
 
+    /**
+     * populate customer table with all existing customers
+     */
     private void populateCustomerTable() {
         try {
             ObservableList<Customer> customers = customerDAO.getAllCustomers();
@@ -94,6 +102,9 @@ public class Customers implements Initializable {
         }
     }
 
+    /**
+     * populate country combobox with countries from database
+     */
     private void populateCountryComboBox() {
         try {
             country.setItems(customerDAO.getAllCountries());
@@ -103,6 +114,10 @@ public class Customers implements Initializable {
         }
     }
 
+    /**
+     * populate division with proper entries based on selected country
+     * @param actionEvent
+     */
     @FXML
     private void onCountrySelected(ActionEvent actionEvent) {
         try {
@@ -113,6 +128,10 @@ public class Customers implements Initializable {
         }
     }
 
+    /**
+     * populate update fields with selected customer
+     * @param mouseEvent
+     */
     @FXML
     private void onCustomerTableClicked(MouseEvent mouseEvent) {
         try{
@@ -132,7 +151,11 @@ public class Customers implements Initializable {
         }
     }
 
-
+    /**
+     * create new customer or save changes to existing customer
+     * confirm before saving
+     * @param actionEvent
+     */
     @FXML
     private void onSaveCustomerButton(ActionEvent actionEvent) {
         try{
@@ -232,6 +255,11 @@ public class Customers implements Initializable {
         }
     }
 
+    /**
+     * change scene
+     * @param actionEvent
+     * @param sceneName
+     */
     private void changeScene (ActionEvent actionEvent, String sceneName){
         try {
             stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
@@ -245,6 +273,11 @@ public class Customers implements Initializable {
         }
     }
 
+    /**
+     * Alert and confirm before returning to appointment menu
+     * @param actionEvent
+     * @throws Exception
+     */
     @FXML
     private void returnToAppointmentsButton(ActionEvent actionEvent) throws Exception {
         if (Alert.confirm("Return",
