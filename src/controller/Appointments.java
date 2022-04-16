@@ -146,7 +146,9 @@ public class Appointments implements Initializable {
                     System.out.println(e);
                 }
             } else {
-                Alert.warn("Invalid Selection","Invalid Selection","Please select an appointment.");
+                Alert.warn("Invalid Selection",
+                        "Invalid Selection",
+                        "Please select an appointment.");
             }
         } catch (Exception e) {
             //TODO error handling
@@ -157,7 +159,9 @@ public class Appointments implements Initializable {
     @FXML
     private void onDeleteAppointmentButton(ActionEvent actionEvent) {
         if (appointmentTable.getSelectionModel().getSelectedItem() != null) {
-            if (Alert.confirm("Delete Appointment","Delete Appointment","Are you sure?")){
+            if (Alert.confirm("Cancel Appointment",
+                    "Cancel Appointment",
+                    "Are you sure you want to cancel this appointment?")){
                 try {
                     if(appointmentDAO.deleteAppointment(selectedAppointment.getID())){
                         //TODO add type to message
@@ -196,7 +200,9 @@ public class Appointments implements Initializable {
 
     @FXML
     private void onExitButton(ActionEvent actionEvent) throws Exception {
-        if (utils.Alert.confirm("Exit","Close Application","Are you sure you want to close the application?")) {
+        if (utils.Alert.confirm("Exit",
+                "Close Application",
+                "Are you sure you want to close the application?")) {
             //close DB connection before exit
             DBConnection.closeConnection();
             System.exit(0);

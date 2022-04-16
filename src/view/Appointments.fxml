@@ -16,7 +16,7 @@
         </Label>
         <Button fx:id="newAppointmentButton" layoutX="816.0" layoutY="17.0" mnemonicParsing="false" onAction="#onNewAppointmentButton" prefHeight="26.0" prefWidth="126.0" text="New Appointment" />
         <Button fx:id="editAppointmentButton" layoutX="975.0" layoutY="17.0" mnemonicParsing="false" onAction="#onEditAppointmentButton" prefHeight="26.0" prefWidth="126.0" text="Edit Appointment" />
-        <Button fx:id="deleteAppointmentButton" layoutX="1132.0" layoutY="17.0" mnemonicParsing="false" onAction="#onDeleteAppointmentButton" prefHeight="26.0" prefWidth="126.0" text="Delete Appointment" />
+        <Button fx:id="deleteAppointmentButton" layoutX="1132.0" layoutY="17.0" mnemonicParsing="false" onAction="#onDeleteAppointmentButton" prefHeight="26.0" prefWidth="126.0" text="Cancel Appointment" />
         <TableView fx:id="appointmentTable" layoutX="18.0" layoutY="54.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onAppointmentSelected" prefHeight="566.0" prefWidth="1258.0">
             <columns>
                 <TableColumn fx:id="appointmentIdColumn" prefWidth="35.0" text="ID" />

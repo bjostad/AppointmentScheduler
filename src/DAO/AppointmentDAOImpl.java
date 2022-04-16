@@ -65,8 +65,8 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             pStatement.setString(2, appointment.getDescription());
             pStatement.setString(3, appointment.getLocation());
             pStatement.setString(4, appointment.getType());
-            pStatement.setString(5, appointment.getStart().toString());
-            pStatement.setString(6, appointment.getEnd().toString());
+            pStatement.setTimestamp(5, Timestamp.valueOf(appointment.getStart()));
+            pStatement.setTimestamp(6, Timestamp.valueOf(appointment.getEnd()));
             pStatement.setString(7, Login.currentUser.getUsername());
             pStatement.setString(8, Login.currentUser.getUsername());
             pStatement.setInt(9,appointment.getCustomerID());
@@ -93,8 +93,8 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             pStatement.setString(2, appointment.getDescription());
             pStatement.setString(3, appointment.getLocation());
             pStatement.setString(4, appointment.getType());
-            pStatement.setString(5, appointment.getStart().toString());
-            pStatement.setString(6, appointment.getEnd().toString());
+            pStatement.setTimestamp(5, Timestamp.valueOf(appointment.getStart()));
+            pStatement.setTimestamp(6, Timestamp.valueOf(appointment.getEnd()));
             pStatement.setString(7, Login.currentUser.getUsername());
             pStatement.setInt(8,appointment.getCustomerID());
             pStatement.setInt(9,appointment.getUserID());

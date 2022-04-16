@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import model.Appointment;
 import model.Contact;
 import model.Customer;
 import model.User;
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
@@ -37,9 +40,9 @@ public class NewEditAppointment implements Initializable {
     @FXML
     private DatePicker date;
     @FXML
-    private TextField startTime;
+    private ComboBox<LocalTime> startTime;
     @FXML
-    private TextField endTime;
+    private ComboBox<LocalTime> endTime;
     @FXML
     private TextField title;
     @FXML
@@ -62,11 +65,14 @@ public class NewEditAppointment implements Initializable {
     CustomerDAO customerDAO = new CustomerDAOImpl();
     AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
 
+    Appointment selectedAppointment = Appointments.getSelectedAppointment();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             DBConnection.makeConnection();
+            startTime.setItems(setBusinessHours());
+            endTime.setItems(setBusinessHours());
             populateUserComboBox();
             populateCustomerComboBox();
             populateTypeComboBox();
@@ -124,17 +130,28 @@ public class NewEditAppointment implements Initializable {
         }
     }
 
+    private ObservableList<LocalTime> setBusinessHours(){
+        ObservableList<LocalTime> businessHours = FXCollections.observableArrayList();
+        LocalTime startHours = LocalTime.of(8,00);
+        LocalTime endHours = LocalTime.of(20,00);
+        while(startHours.isBefore(endHours) || startHours.equals(endHours)){
+            businessHours.add(startHours);
+            startHours = startHours.plusMinutes(15);
+        }
+        return businessHours;
+
+    }
+
     private void setupEditOrNew(){
         if(Appointments.getSelectedAppointment() != null){
 
             appointmentLabel.setText("Edit Appointment");
             isNew = false;
 
-            model.Appointment selectedAppointment = Appointments.getSelectedAppointment();
             appointmentID.setText(String.valueOf(selectedAppointment.getID()));
             date.setValue(selectedAppointment.getStart().toLocalDate());
-            startTime.setText(selectedAppointment.getStart().toLocalTime().toString());
-            endTime.setText(selectedAppointment.getEnd().toLocalTime().toString());
+            startTime.getSelectionModel().select(selectedAppointment.getStart().toLocalTime());
+            endTime.getSelectionModel().select(selectedAppointment.getEnd().toLocalTime());
             title.setText(selectedAppointment.getTitle());
             description.setText(selectedAppointment.getDescription());
             location.setText(selectedAppointment.getLocation());
@@ -174,8 +191,8 @@ public class NewEditAppointment implements Initializable {
                     description.getText(),
                     location.getText(),
                     type.getSelectionModel().getSelectedItem(),
-                    getStartDateTime(),
-                    getEndDateTime(),
+                    LocalDateTime.of(date.getValue(),startTime.getValue()),
+                    LocalDateTime.of(date.getValue(),endTime.getValue()),
                     customer.getSelectionModel().getSelectedItem().getID(),
                     customer.getSelectionModel().getSelectedItem().getName(),
                     user.getSelectionModel().getSelectedItem().getID(),
@@ -198,22 +215,6 @@ public class NewEditAppointment implements Initializable {
             return Integer.parseInt(appointmentID.getText());
         }
         return 0;
-    }
-
-    private LocalDateTime getStartDateTime(){
-        String selectedStartDateTime = Date.valueOf(date.getValue()) +" "+ startTime.getText();
-        DateTimeFormatter formatDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime startDateTime = LocalDateTime.parse(selectedStartDateTime, formatDateTime);
-        System.out.println(startDateTime);
-        return startDateTime;
-    }
-
-    private LocalDateTime getEndDateTime(){
-        String selectedStartDateTime = Date.valueOf(date.getValue()) +" "+ endTime.getText();
-        DateTimeFormatter formatDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime endDateTime = LocalDateTime.parse(selectedStartDateTime, formatDateTime);
-        System.out.println(endDateTime);
-        return endDateTime;
     }
 
     @FXML
