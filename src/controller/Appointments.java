@@ -54,8 +54,7 @@ public class Appointments implements Initializable {
     @FXML
     private TableView<Appointment> appointmentTable;
 
-    AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
-
+    private static AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
     private static Appointment selectedAppointment = null;
 
     @Override

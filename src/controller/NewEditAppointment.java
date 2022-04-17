@@ -16,13 +16,12 @@ import model.Contact;
 import model.Customer;
 import model.User;
 import utils.Alert;
+import utils.Time;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
@@ -58,14 +57,12 @@ public class NewEditAppointment implements Initializable {
     @FXML
     private ComboBox<User> user;
 
+    private static UserDAO userDAO = new UserDAOImpl();
+    private static ContactDAO contactDAO = new ContactDAOImpl();
+    private static CustomerDAO customerDAO = new CustomerDAOImpl();
+    private static AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
+    private Appointment selectedAppointment = Appointments.getSelectedAppointment();
     private boolean isNew;
-
-    UserDAO userDAO = new UserDAOImpl();
-    ContactDAO contactDAO = new ContactDAOImpl();
-    CustomerDAO customerDAO = new CustomerDAOImpl();
-    AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
-
-    Appointment selectedAppointment = Appointments.getSelectedAppointment();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -132,14 +129,12 @@ public class NewEditAppointment implements Initializable {
 
     private ObservableList<LocalTime> setBusinessHours(){
         ObservableList<LocalTime> businessHours = FXCollections.observableArrayList();
-        LocalTime startHours = LocalTime.of(8,00);
-        LocalTime endHours = LocalTime.of(20,00);
-        while(startHours.isBefore(endHours) || startHours.equals(endHours)){
+        LocalTime startHours = LocalTime.of(8,00).minusHours(Time.offsetTo("America/New_York"));
+        for(int i = 0; i<=56;i++){
             businessHours.add(startHours);
             startHours = startHours.plusMinutes(15);
         }
         return businessHours;
-
     }
 
     private void setupEditOrNew(){
@@ -191,8 +186,8 @@ public class NewEditAppointment implements Initializable {
                     description.getText(),
                     location.getText(),
                     type.getSelectionModel().getSelectedItem(),
-                    LocalDateTime.of(date.getValue(),startTime.getValue()),
-                    LocalDateTime.of(date.getValue(),endTime.getValue()),
+                    getStartDateTime(),
+                    getEndDateTime(),
                     customer.getSelectionModel().getSelectedItem().getID(),
                     customer.getSelectionModel().getSelectedItem().getName(),
                     user.getSelectionModel().getSelectedItem().getID(),
@@ -208,6 +203,34 @@ public class NewEditAppointment implements Initializable {
             //TODO capture and alert proper invalid entries
             System.out.println(e);
         }
+    }
+
+    /**
+     * getStartDateTime
+     * convert input date and time into localDateTime
+     * correct day if time selected is the next day
+     * @return LocalDateTime
+     */
+    private LocalDateTime getStartDateTime(){
+        LocalDateTime startDateTime = LocalDateTime.of(date.getValue(),startTime.getValue());
+        if(startTime.getValue().isBefore(LocalTime.of(8,00).minusHours(Time.offsetTo("America/New_York")))){
+            startDateTime = LocalDateTime.of(date.getValue().plusDays(1),startTime.getValue());
+        }
+        return startDateTime;
+    }
+
+    /**
+     * getEndDateTime
+     * convert input date and time to localDateTime
+     * correct day if time selected is the next day
+     * @return localDateTime
+     */
+    private LocalDateTime getEndDateTime(){
+        LocalDateTime endDateTime = LocalDateTime.of(date.getValue(),endTime.getValue());
+        if(endTime.getValue().isBefore(LocalTime.of(8,00).minusHours(Time.offsetTo("America/New_York")))){
+            endDateTime = LocalDateTime.of(date.getValue().plusDays(1),endTime.getValue());
+        }
+        return endDateTime;
     }
 
     private int determineAppID(){

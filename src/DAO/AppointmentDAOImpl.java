@@ -5,12 +5,14 @@ import controller.Login;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.Appointment;
+import utils.Time;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * @author BJ Bjostad
@@ -33,8 +35,8 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                 String description = results.getString("Description");
                 String location = results.getString("Location");
                 String type = results.getString("Type");
-                LocalDateTime start = results.getTimestamp("Start").toLocalDateTime();
-                LocalDateTime end = results.getTimestamp("End").toLocalDateTime();
+                LocalDateTime start = Time.convertFromUTC(results.getTimestamp("Start").toLocalDateTime());
+                LocalDateTime end = Time.convertFromUTC(results.getTimestamp("End").toLocalDateTime());
                 int customerID = results.getInt("Customer_ID");
                 String customerName = results.getString("Customer_Name");
                 int userID = results.getInt("User_ID");
@@ -65,8 +67,8 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             pStatement.setString(2, appointment.getDescription());
             pStatement.setString(3, appointment.getLocation());
             pStatement.setString(4, appointment.getType());
-            pStatement.setTimestamp(5, Timestamp.valueOf(appointment.getStart()));
-            pStatement.setTimestamp(6, Timestamp.valueOf(appointment.getEnd()));
+            pStatement.setTimestamp(5, Timestamp.valueOf(Time.convertToUTC(appointment.getStart())));
+            pStatement.setTimestamp(6, Timestamp.valueOf(Time.convertToUTC(appointment.getEnd())));
             pStatement.setString(7, Login.currentUser.getUsername());
             pStatement.setString(8, Login.currentUser.getUsername());
             pStatement.setInt(9,appointment.getCustomerID());
@@ -93,8 +95,8 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             pStatement.setString(2, appointment.getDescription());
             pStatement.setString(3, appointment.getLocation());
             pStatement.setString(4, appointment.getType());
-            pStatement.setTimestamp(5, Timestamp.valueOf(appointment.getStart()));
-            pStatement.setTimestamp(6, Timestamp.valueOf(appointment.getEnd()));
+            pStatement.setTimestamp(5, Timestamp.valueOf(Time.convertToUTC(appointment.getStart())));
+            pStatement.setTimestamp(6, Timestamp.valueOf(Time.convertToUTC(appointment.getEnd())));
             pStatement.setString(7, Login.currentUser.getUsername());
             pStatement.setInt(8,appointment.getCustomerID());
             pStatement.setInt(9,appointment.getUserID());
