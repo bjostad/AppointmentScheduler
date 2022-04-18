@@ -3,6 +3,7 @@ package controller;
 import DAO.AppointmentDAO;
 import DAO.AppointmentDAOImpl;
 import DAO.DBConnection;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -23,6 +25,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * @author BJ Bjostad
@@ -53,6 +56,12 @@ public class Appointments implements Initializable {
     private TableColumn<Appointment, Integer> userIdColumn;
     @FXML
     private TableView<Appointment> appointmentTable;
+    @FXML
+    private RadioButton filterAll;
+    @FXML
+    private RadioButton filterSevenDays;
+    @FXML
+    private RadioButton filterMonth;
 
     private static AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
     private static Appointment selectedAppointment = null;
@@ -74,10 +83,11 @@ public class Appointments implements Initializable {
     }
 
     private void populateAppointmentTable(){
+        ObservableList<Appointment> filteredAppointments = filterAppointments();
         try{
-            ObservableList<Appointment> appointments = appointmentDAO.getAllAppointments();
-            System.out.println(appointments);
-            appointmentTable.setItems(appointments);
+            //TODO remove testing line below
+            System.out.println(filteredAppointments);
+            appointmentTable.setItems(filteredAppointments);
             appointmentIdColumn.setCellValueFactory(new PropertyValueFactory<>("ID"));
             startDateTimeColumn.setCellValueFactory(new PropertyValueFactory<>("start"));
             endDateTimeColumn.setCellValueFactory(new PropertyValueFactory<>("end"));
@@ -94,16 +104,22 @@ public class Appointments implements Initializable {
         }
     }
 
-    private void changeScene (ActionEvent actionEvent, String sceneName){
-        try {
-            stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
-            scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
-            stage.setScene(new Scene(scene));
-            stage.centerOnScreen();
-            stage.show();
-        } catch (IOException e){
-            //TODO error handling
-            System.out.println(e);
+    private ObservableList<Appointment> filterAppointments(){
+        ObservableList<Appointment> allAppointments = appointmentDAO.getAllAppointments();
+        if(filterSevenDays.isSelected()){
+            return allAppointments.stream()
+                    .filter(s -> s.getStart().isAfter((LocalDateTime.now())))
+                    .filter(e -> e.getStart().toLocalDate()
+                            .isBefore(LocalDateTime.now().toLocalDate().plusDays(8)))
+                    .collect(Collectors.toCollection(FXCollections::observableArrayList));
+        } else if(filterMonth.isSelected()){
+            return allAppointments.stream()
+                    .filter(s -> s.getStart().isAfter((LocalDateTime.now())))
+                    .filter(a -> a.getStart().toLocalDate()
+                            .isBefore(LocalDateTime.now().toLocalDate().plusMonths(1).plusDays(1)))
+                    .collect(Collectors.toCollection(FXCollections::observableArrayList));
+        } else {
+            return allAppointments;
         }
     }
 
@@ -198,6 +214,21 @@ public class Appointments implements Initializable {
     }
 
     @FXML
+    private void onFilterAll(ActionEvent actionEvent) {
+        populateAppointmentTable();
+    }
+
+    @FXML
+    private void onFilterSevenDays(ActionEvent actionEvent) {
+        populateAppointmentTable();
+    }
+
+    @FXML
+    private void onFilterMonth(ActionEvent actionEvent) {
+        populateAppointmentTable();
+    }
+
+    @FXML
     private void onExitButton(ActionEvent actionEvent) throws Exception {
         if (utils.Alert.confirm("Exit",
                 "Close Application",
@@ -207,4 +238,19 @@ public class Appointments implements Initializable {
             System.exit(0);
         }
     }
+
+    private void changeScene (ActionEvent actionEvent, String sceneName){
+        try {
+            stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
+            scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
+            stage.setScene(new Scene(scene));
+            stage.centerOnScreen();
+            stage.show();
+        } catch (IOException e){
+            //TODO error handling
+            System.out.println(e);
+        }
+    }
+
+
 }

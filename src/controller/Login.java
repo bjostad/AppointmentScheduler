@@ -1,8 +1,8 @@
 package controller;
 
-import DAO.DBConnection;
-import DAO.UserDAO;
-import DAO.UserDAOImpl;
+import DAO.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,14 +13,20 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import model.Appointment;
 import model.User;
+import utils.Alert;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class Login implements Initializable {
 
@@ -47,7 +53,8 @@ public class Login implements Initializable {
     private Label titleLabel;
 
     private ResourceBundle language = ResourceBundle.getBundle("resources/language",Locale.getDefault());
-    UserDAO userDAO = new UserDAOImpl();
+    private static UserDAO userDAO = new UserDAOImpl();
+    private static AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
 
     public static User currentUser = null;
 
@@ -80,6 +87,7 @@ public class Login implements Initializable {
             }
             if(passwordText.getText().equals(loginUserPassword)){
                 currentUser = loginUser;
+                checkUpcomingAppointment();
                 DBConnection.closeConnection();
                 changeScene(actionEvent, "Appointments");
             } else {
@@ -101,6 +109,28 @@ public class Login implements Initializable {
         } catch (IOException e){
             //TODO error handling
             System.out.println(e);
+        }
+    }
+
+    private void checkUpcomingAppointment(){
+        ObservableList<Appointment> allAppointments = appointmentDAO.getAllAppointments();
+        ObservableList<Appointment> upcomingAppointments = FXCollections.observableArrayList();
+        upcomingAppointments = allAppointments.stream()
+                .filter(s -> s.getStart().isAfter((LocalDateTime.now())))
+                .filter(e -> e.getStart().isBefore(LocalDateTime.now().plusMinutes(16)))
+                .collect(Collectors.toCollection(FXCollections::observableArrayList));
+        for(Appointment a:upcomingAppointments){
+            Alert.warn("Upcoming Appointment",
+                    "Appointment with "+a.getCustomerName()+" in " +
+                            (LocalDateTime.now().until(a.getStart(), ChronoUnit.MINUTES))+" minutes.",
+                    "Appointment "+a.getID()+" in "+
+                            (LocalDateTime.now().until(a.getStart(), ChronoUnit.MINUTES))+" minutes at "+
+                            a.getStart().toLocalTime()+" "+a.getStart().toLocalDate());
+        }
+        if(upcomingAppointments.isEmpty()){
+            Alert.warn("Upcoming Appointment",
+                    "No upcoming appointments.",
+                    "There are no upcoming appointments within 15 minutes.");
         }
     }
 
