@@ -27,7 +27,47 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                 "LEFT JOIN USERS ON APPS.USER_ID = USERS.USER_ID " +
                 "LEFT JOIN CUSTOMERS AS CUSTS ON APPS.CUSTOMER_ID = CUSTS.CUSTOMER_ID";
         try {
-            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getAllAppointmentsSQL);
+            PreparedStatement pStatement = DBConnection.getConnection()
+                    .prepareStatement(getAllAppointmentsSQL);
+            ResultSet results = pStatement.executeQuery();
+            while (results.next()) {
+                int ID = results.getInt("Appointment_ID");
+                String title = results.getString("Title");
+                String description = results.getString("Description");
+                String location = results.getString("Location");
+                String type = results.getString("Type");
+                LocalDateTime start = Time.convertFromUTC(results.getTimestamp("Start").toLocalDateTime());
+                LocalDateTime end = Time.convertFromUTC(results.getTimestamp("End").toLocalDateTime());
+                int customerID = results.getInt("Customer_ID");
+                String customerName = results.getString("Customer_Name");
+                int userID = results.getInt("User_ID");
+                String userName = results.getString("User_Name");
+                int contactID = results.getInt("Contact_ID");
+                String contactName = results.getString("Contact_Name");
+                appointments.add(new Appointment(
+                        ID, title, description, location,
+                        type, start, end, customerID, customerName,
+                        userID, userName, contactID, contactName));
+            }
+        } catch (SQLException e){
+            //TODO error handling
+            System.out.println(e);
+        }
+        return appointments;
+    }
+
+    @Override
+    public ObservableList<Appointment> getAllCustomerAppointments(int custID){
+        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
+        String getAllAppointmentsSQL = "SELECT * FROM APPOINTMENTS AS APPS " +
+                "LEFT JOIN CONTACTS AS CONS ON APPS.CONTACT_ID = CONS.CONTACT_ID " +
+                "LEFT JOIN USERS ON APPS.USER_ID = USERS.USER_ID " +
+                "LEFT JOIN CUSTOMERS AS CUSTS ON APPS.CUSTOMER_ID = CUSTS.CUSTOMER_ID " +
+                "WHERE CUSTS.Customer_ID = ?";
+        try {
+            PreparedStatement pStatement = DBConnection.getConnection()
+                    .prepareStatement(getAllAppointmentsSQL);
+            pStatement.setInt(1, custID);
             ResultSet results = pStatement.executeQuery();
             while (results.next()) {
                 int ID = results.getInt("Appointment_ID");
@@ -62,7 +102,8 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                                        "START,END,CREATE_DATE,CREATED_BY,LAST_UPDATE,LAST_UPDATED_BY," +
                                        "CUSTOMER_ID,USER_ID,CONTACT_ID) " +
                                        "VALUES(?,?,?,?,?,?,now(),?,now(),?,?,?,?)";
-            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(createAppointmentSQL);
+            PreparedStatement pStatement = DBConnection.getConnection()
+                    .prepareStatement(createAppointmentSQL);
             pStatement.setString(1, appointment.getTitle());
             pStatement.setString(2, appointment.getDescription());
             pStatement.setString(3, appointment.getLocation());
@@ -90,7 +131,8 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                                           "TYPE=?,START=?, END=?,LAST_UPDATE=NOW(),LAST_UPDATED_BY=?," +
                                           "CUSTOMER_ID=?, USER_ID=?,CONTACT_ID=? " +
                                           "WHERE APPOINTMENT_ID = ?";
-            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(updateAppointmentSQL);
+            PreparedStatement pStatement = DBConnection.getConnection()
+                    .prepareStatement(updateAppointmentSQL);
             pStatement.setString(1, appointment.getTitle());
             pStatement.setString(2, appointment.getDescription());
             pStatement.setString(3, appointment.getLocation());
@@ -115,7 +157,8 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     public boolean deleteAppointment(int appointmentID) {
         try{
             String deleteAppointmentSQL = "DELETE FROM APPOINTMENTS WHERE APPOINTMENT_ID = ?";
-            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(deleteAppointmentSQL);
+            PreparedStatement pStatement = DBConnection.getConnection()
+                    .prepareStatement(deleteAppointmentSQL);
             pStatement.setString(1, String.valueOf(appointmentID));
             pStatement.executeUpdate();
             return true;

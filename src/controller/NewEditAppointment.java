@@ -25,6 +25,7 @@ import java.sql.Date;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * @author BJ Bjostad
@@ -75,9 +76,7 @@ public class NewEditAppointment implements Initializable {
             populateCustomerComboBox();
             populateTypeComboBox();
             populateContactComboBox();
-
             setupEditOrNew();
-
         } catch (Exception e) {
             //TODO error handling
             e.printStackTrace();
@@ -166,16 +165,23 @@ public class NewEditAppointment implements Initializable {
     private void onSaveButton(ActionEvent actionEvent) {
         //TODO check for conflicting existing appointment
         if(validateInput()){
-            try{
-                if(Alert.confirm("Save Appointment",
-                        "Save Appointment?",
-                        "Are you sure you want to save the appointment?")){
-                    saveAppointment();
-                    changeScene(actionEvent,"Appointments");
-                }
+            if(validateAppointment()){
+                try{
+                    if(Alert.confirm("Save Appointment",
+                            "Save Appointment?",
+                            "Are you sure you want to save the appointment?")){
+                        saveAppointment();
+                        changeScene(actionEvent,"Appointments");
+                    }
 
-            } catch (Exception e){
-                System.out.println(e);
+                } catch (Exception e){
+                    System.out.println(e);
+                }
+            } else {
+                Alert.warn("Appointment Conflict",
+                        "Appointment Conflict",
+                        "This appointment conflicts with an existing appointment for "
+                                + customer.getValue().getName());
             }
         }
     }
@@ -250,6 +256,39 @@ public class NewEditAppointment implements Initializable {
             isValid = false;
         }
         return isValid;
+    }
+
+    /**
+     * validateAppointment()
+     * checks appointments date/time to make sure there is no conflict
+     * only compares against existing appointments for selected customer
+     * @return boolean
+     */
+    private boolean validateAppointment(){
+        LocalDateTime startDateTime = getStartDateTime();
+        LocalDateTime endDateTime = getEndDateTime();
+        ObservableList<Appointment> conflictingAppointments = FXCollections.observableArrayList();
+        try{
+            ObservableList<Appointment> allCustomerAppointments =
+                    appointmentDAO.getAllCustomerAppointments(customer.getValue().getID());
+            conflictingAppointments = allCustomerAppointments.stream()
+                    .filter(a -> a.getID() != Integer.parseInt(appointmentID.getText()))
+                    .filter(a -> ((startDateTime.isAfter(a.getStart()) || startDateTime.isEqual(a.getStart()))
+                                    && startDateTime.isBefore(a.getEnd()))
+                            || (endDateTime.isAfter(a.getStart()) && (endDateTime.isBefore(a.getEnd())
+                                    || endDateTime.isEqual(a.getEnd())))
+                            || (startDateTime.isBefore(a.getStart()) && endDateTime.isAfter(a.getEnd()))
+                            || (startDateTime.isEqual(a.getStart()) && endDateTime.isEqual(a.getEnd())))
+                    .collect(Collectors.toCollection(FXCollections::observableArrayList));
+        } catch (Exception e){
+            //TODO Error handling
+            System.out.println(e);
+        }
+        System.out.println(conflictingAppointments);
+        if (conflictingAppointments.isEmpty()){
+            return true;
+        }
+        return false;
     }
 
     /**
