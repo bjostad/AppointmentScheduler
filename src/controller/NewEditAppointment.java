@@ -260,7 +260,8 @@ public class NewEditAppointment implements Initializable {
      */
     private LocalDateTime getStartDateTime(){
         LocalDateTime startDateTime = LocalDateTime.of(date.getValue(),startTime.getValue());
-        if(startTime.getValue().isBefore(LocalTime.of(8,00).minusHours(Time.offsetTo("America/New_York")))){
+        if(startTime.getValue().isBefore(LocalTime.of(8,00)
+                .minusHours(Time.offsetTo("America/New_York")))){
             startDateTime = LocalDateTime.of(date.getValue().plusDays(1),startTime.getValue());
         }
         return startDateTime;
@@ -274,7 +275,8 @@ public class NewEditAppointment implements Initializable {
      */
     private LocalDateTime getEndDateTime(){
         LocalDateTime endDateTime = LocalDateTime.of(date.getValue(),endTime.getValue());
-        if(endTime.getValue().isBefore(LocalTime.of(8,00).minusHours(Time.offsetTo("America/New_York")))){
+        if(endTime.getValue().isBefore(LocalTime.of(8,00)
+                .minusHours(Time.offsetTo("America/New_York")))){
             endDateTime = LocalDateTime.of(date.getValue().plusDays(1),endTime.getValue());
         }
         return endDateTime;

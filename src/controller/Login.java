@@ -1,6 +1,7 @@
 package controller;
 
 import DAO.*;
+import java.io.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,9 +21,8 @@ import utils.Alert;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -55,10 +55,10 @@ public class Login implements Initializable {
     private ResourceBundle language = ResourceBundle.getBundle("resources/language",Locale.getDefault());
     private static UserDAO userDAO = new UserDAOImpl();
     private static AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
-
     public static User currentUser = null;
 
     /**
+     * onExitButton
      * Confirm user wishes to exit and exit program
      * @param actionEvent
      */
@@ -89,9 +89,11 @@ public class Login implements Initializable {
                 currentUser = loginUser;
                 checkUpcomingAppointment();
                 DBConnection.closeConnection();
+                logLoginAttempt(usernameText.getText(),true);
                 changeScene(actionEvent, "Appointments");
             } else {
                 utils.Alert.warn(language.getString("loginTitle"),language.getString("loginHeader"),language.getString("loginContent"));
+                logLoginAttempt(usernameText.getText(),false);
             }
         } catch (SQLException e) {
             //TODO error handling
@@ -99,22 +101,29 @@ public class Login implements Initializable {
         }
     }
 
-    private void changeScene (ActionEvent actionEvent, String sceneName){
-        try {
-            stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
-            scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
-            stage.setScene(new Scene(scene));
-            stage.centerOnScreen();
-            stage.show();
+    private void logLoginAttempt(String username, boolean loginSuccess){
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        try{
+            FileWriter fwLog = new FileWriter("login_activity.txt",true);
+            PrintWriter pwLog = new PrintWriter(fwLog);
+            if(loginSuccess){
+                pwLog.println(LocalDateTime.now().format(df)+" "+ OffsetDateTime.now().getOffset() +
+                        " -   Successful login attempt by user: "+username);
+            } else {
+                pwLog.println(LocalDateTime.now().format(df)+" "+OffsetDateTime.now().getOffset()+
+                        " - Unsuccessful login attempt by user: "+username);
+            }
+            fwLog.close();
         } catch (IOException e){
-            //TODO error handling
-            System.out.println(e);
+            Alert.warn("IO error",
+                    "Unable to write to login activity log.",
+                    e.toString());
         }
     }
 
     private void checkUpcomingAppointment(){
         ObservableList<Appointment> allAppointments = appointmentDAO.getAllAppointments();
-        ObservableList<Appointment> upcomingAppointments = FXCollections.observableArrayList();
+        ObservableList<Appointment> upcomingAppointments;
         upcomingAppointments = allAppointments.stream()
                 .filter(s -> s.getStart().isAfter((LocalDateTime.now())))
                 .filter(e -> e.getStart().isBefore(LocalDateTime.now().plusMinutes(16)))
@@ -134,12 +143,30 @@ public class Login implements Initializable {
         }
     }
 
+    /**
+     * changeScene
+     * switch to another scene
+     * @param actionEvent
+     * @param sceneName
+     */
+    private void changeScene (ActionEvent actionEvent, String sceneName){
+        try {
+            stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
+            scene = FXMLLoader.load(getClass().getResource("/view/"+sceneName+".fxml"));
+            stage.setScene(new Scene(scene));
+            stage.centerOnScreen();
+            stage.show();
+        } catch (IOException e){
+            //TODO error handling
+            System.out.println(e);
+        }
+    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             DBConnection.makeConnection();
         } catch (Exception e) {
-
+            //TODO error handling
         }
         timeZoneSelectionLabel.setText(ZoneId.systemDefault().toString());
         timeZoneLabel.setText(language.getString("timeZoneLabel"));

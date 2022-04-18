@@ -30,7 +30,7 @@
                 <TableColumn fx:id="contactColumn" prefWidth="171.0" text="Contact" />
                 <TableColumn fx:id="typeColumn" prefWidth="137.0" text="Type" />
                 <TableColumn fx:id="customerIdColumn" prefWidth="160.0" text="Customer" />
-                <TableColumn fx:id="userIdColumn" minWidth="2.0" prefWidth="54.0" text="User ID" />
+                <TableColumn fx:id="userIdColumn" minWidth="2.0" prefWidth="53.0" text="User ID" />
             </columns>
         </TableView>
         <Button fx:id="customersButton" layoutX="37.0" layoutY="637.0" mnemonicParsing="false" onAction="#onCustomerButton" prefHeight="41.0" prefWidth="102.0" text="Customers">
@@ -41,7 +41,7 @@
          <font>
             <Font size="16.0" />
          </font></Button>
-      <Button layoutX="1156.0" layoutY="637.0" mnemonicParsing="false" onAction="#onExitButton" prefHeight="41.0" prefWidth="102.0" text="EXIT">
+      <Button cancelButton="true" layoutX="1156.0" layoutY="637.0" mnemonicParsing="false" onAction="#onExitButton" prefHeight="41.0" prefWidth="102.0" text="EXIT">
          <font>
             <Font size="18.0" />
          </font>
