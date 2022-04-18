@@ -210,6 +210,13 @@ public class Appointments implements Initializable {
 
     @FXML
     private void onReportsButton(ActionEvent actionEvent) {
+        try {
+            DBConnection.closeConnection();
+            changeScene( actionEvent, "Reports");
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     @FXML

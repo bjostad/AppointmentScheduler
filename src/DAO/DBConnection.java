@@ -14,11 +14,8 @@ public class DBConnection {
 
     /**
      * Connect to mySQL database
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     * @throws Exception
      */
-    public static void makeConnection() throws ClassNotFoundException, SQLException, Exception {
+    public static void makeConnection() {
         try{
             dbConnection=(Connection) DriverManager.getConnection(dbURL,username,password);
             System.out.println(dbConnection);
@@ -34,11 +31,8 @@ public class DBConnection {
 
     /**
      * Close mySQL database connection
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     * @throws Exception
      */
-    public static void closeConnection() throws ClassNotFoundException, SQLException, Exception{
+    public static void closeConnection() {
         try{
             dbConnection.close();
             System.out.println("Connection Closed");

@@ -78,26 +78,21 @@ public class Login implements Initializable {
      * @throws Exception
      */
     @FXML
-    private void onLogInButton(ActionEvent actionEvent) throws SQLException, Exception {
+    private void onLogInButton(ActionEvent actionEvent) {
         String loginUserPassword = null;
-        try{
-            User loginUser = userDAO.getUser(usernameText.getText());
-            if (loginUser != null){
-                loginUserPassword = loginUser.getPassword();
-            }
-            if(passwordText.getText().equals(loginUserPassword)){
-                currentUser = loginUser;
-                checkUpcomingAppointment();
-                DBConnection.closeConnection();
-                logLoginAttempt(usernameText.getText(),true);
-                changeScene(actionEvent, "Appointments");
-            } else {
-                utils.Alert.warn(language.getString("loginTitle"),language.getString("loginHeader"),language.getString("loginContent"));
-                logLoginAttempt(usernameText.getText(),false);
-            }
-        } catch (SQLException e) {
-            //TODO error handling
-            System.out.println(e);
+        User loginUser = userDAO.getUser(usernameText.getText());
+        if (loginUser != null){
+            loginUserPassword = loginUser.getPassword();
+        }
+        if(passwordText.getText().equals(loginUserPassword)){
+            currentUser = loginUser;
+            checkUpcomingAppointment();
+            DBConnection.closeConnection();
+            logLoginAttempt(usernameText.getText(),true);
+            changeScene(actionEvent, "Appointments");
+        } else {
+            utils.Alert.warn(language.getString("loginTitle"),language.getString("loginHeader"),language.getString("loginContent"));
+            logLoginAttempt(usernameText.getText(),false);
         }
     }
 
