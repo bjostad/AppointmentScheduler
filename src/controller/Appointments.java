@@ -179,11 +179,10 @@ public class Appointments implements Initializable {
                     "Are you sure you want to cancel this appointment?")){
                 try {
                     if(appointmentDAO.deleteAppointment(selectedAppointment.getID())){
-                        //TODO add type to message
-                        Alert.info("Appointment Deleted",
-                                "Appointment Deleted Successfully",
+                        Alert.info("Appointment Canceled",
+                                "Appointment Canceled Successfully",
                                 "Appointment "+selectedAppointment.getID()+
-                                        " with type "+selectedAppointment.getType()+" has been deleted.");
+                                        " of type "+selectedAppointment.getType()+" has been canceled.");
                     }
                     populateAppointmentTable();
                 } catch (Exception e){

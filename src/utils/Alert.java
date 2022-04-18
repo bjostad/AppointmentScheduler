@@ -56,4 +56,12 @@ public class Alert {
         Optional<ButtonType> exit = alert.showAndWait();
     }
 
+    public static void invalidInput(String input){
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
+        alert.setTitle("Invalid Input");
+        alert.setHeaderText("Input for "+input+" is not valid.");
+        alert.setContentText("Please correct the input for "+input+" and try again.");
+        Optional<ButtonType> exit = alert.showAndWait();
+    }
+
 }

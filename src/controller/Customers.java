@@ -166,27 +166,29 @@ public class Customers implements Initializable {
             if(!isNew){
               id = Integer.parseInt(customerID.getText());
             }
-            Customer customer = new Customer(id,
-                    customerName.getText(),
-                    address.getText(),
-                    postalCode.getText(),
-                    phoneNumber.getText(),
-                    divisionID,
-                    divisionName,
-                    0,
-                    null);
-            if(isNew){
-                if(Alert.confirm("Create New Customer",
-                        "Create New Customer "+customer.getName()+"?",
-                        "Are you sure you want to create a new customer?")){
-                    customerDAO.createNewCustomer(customer);
-                }
+            if(validateInput()){
+                Customer customer = new Customer(id,
+                        customerName.getText(),
+                        address.getText(),
+                        postalCode.getText(),
+                        phoneNumber.getText(),
+                        divisionID,
+                        divisionName,
+                        0,
+                        null);
+                if(isNew){
+                    if(Alert.confirm("Create New Customer",
+                            "Create New Customer "+customer.getName()+"?",
+                            "Are you sure you want to create a new customer?")){
+                        customerDAO.createNewCustomer(customer);
+                    }
 
-            } else {
-                if(Alert.confirm("Update Customer",
-                        "Update Customer "+customer.getName()+"?",
-                        "Are you sure you want to update?")){
-                    customerDAO.updateCustomer(customer);
+                } else {
+                    if(Alert.confirm("Update Customer",
+                            "Update Customer "+customer.getName()+"?",
+                            "Are you sure you want to update?")){
+                        customerDAO.updateCustomer(customer);
+                    }
                 }
             }
             populateCustomerTable();
@@ -194,6 +196,35 @@ public class Customers implements Initializable {
             //TODO error handling
             System.out.println(e);
         }
+    }
+
+    private boolean validateInput(){
+        boolean isValid = true;
+        if(customerName.getText().isBlank()){
+            Alert.invalidInput("Customer Name");
+            isValid = false;
+        }
+        if(phoneNumber.getText().isBlank()){
+            Alert.invalidInput("Phone Number");
+            isValid = false;
+        }
+        if(address.getText().isBlank()){
+            Alert.invalidInput("Address");
+            isValid = false;
+        }
+        if(postalCode.getText().isBlank()){
+            Alert.invalidInput("Postal Code");
+            isValid = false;
+        }
+        if(country.getSelectionModel().isEmpty()){
+            Alert.invalidInput("Country");
+            isValid = false;
+        }
+        if(firstLevelDivision.getSelectionModel().isEmpty()){
+            Alert.invalidInput("First-level Division");
+            isValid = false;
+        }
+        return isValid;
     }
 
     /**
@@ -239,7 +270,11 @@ public class Customers implements Initializable {
                         "Delete Customer "+selectedCustomerName+"?",
                         "Are you sure?")){
                     try {
-                        customerDAO.deleteCustomer(selectedCustomerID);
+                        if(customerDAO.deleteCustomer(selectedCustomerID)){
+                            Alert.warn("Customer Deleted",
+                                    selectedCustomerName +" has been deleted.",
+                                    "Customer "+selectedCustomerID+" was successfully deleted.");
+                        }
                         onNewCustomerButton(actionEvent);
                         populateCustomerTable();
                     } catch (Exception e){

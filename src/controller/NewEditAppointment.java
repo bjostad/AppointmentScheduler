@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import model.Appointment;
 import model.Contact;
@@ -152,8 +153,8 @@ public class NewEditAppointment implements Initializable {
             location.setText(selectedAppointment.getLocation());
             contact.getSelectionModel().select(contactDAO.getContactByID(selectedAppointment.getContactID()));
             type.getSelectionModel().select(selectedAppointment.getType());
-            customer.getSelectionModel().select(customerDAO.getCustomerByID(selectedAppointment.getCustomerID()));
-            user.getSelectionModel().select(userDAO.getUser(selectedAppointment.getUserName()));
+            customer.setValue(customerDAO.getCustomerByID(selectedAppointment.getCustomerID()));
+            user.setValue(userDAO.getUser(selectedAppointment.getUserName()));
         } else {
             appointmentLabel.setText("New Appointment");
             isNew = true;
@@ -163,18 +164,19 @@ public class NewEditAppointment implements Initializable {
 
     @FXML
     private void onSaveButton(ActionEvent actionEvent) {
-        //TODO check for existing appointment
-        //TODO check if new or edit and adjust appropriately
-        try{
-            if(Alert.confirm("Save Appointment",
-                    "Save Appointment?",
-                    "Are you sure you want to save the appointment?")){
-                saveAppointment();
-                changeScene(actionEvent,"Appointments");
-            }
+        //TODO check for conflicting existing appointment
+        if(validateInput()){
+            try{
+                if(Alert.confirm("Save Appointment",
+                        "Save Appointment?",
+                        "Are you sure you want to save the appointment?")){
+                    saveAppointment();
+                    changeScene(actionEvent,"Appointments");
+                }
 
-        } catch (Exception e){
-            System.out.println(e);
+            } catch (Exception e){
+                System.out.println(e);
+            }
         }
     }
 
@@ -194,7 +196,7 @@ public class NewEditAppointment implements Initializable {
                     user.getSelectionModel().getSelectedItem().getUsername(),
                     contact.getSelectionModel().getSelectedItem().getID(),
                     contact.getSelectionModel().getSelectedItem().getName());
-            if (isNew){
+            if (isNew) {
                 appointmentDAO.addAppointment(createdAppointment);
             } else {
                 appointmentDAO.updateAppointment(createdAppointment);
@@ -203,6 +205,51 @@ public class NewEditAppointment implements Initializable {
             //TODO capture and alert proper invalid entries
             System.out.println(e);
         }
+    }
+
+    private boolean validateInput(){
+        boolean isValid = true;
+        if(date.getValue() == null){
+            Alert.invalidInput("Date");
+            isValid = false;
+        }
+        if(startTime.getSelectionModel().isEmpty()){
+            Alert.invalidInput("Start Time");
+            isValid = false;
+        }
+        if(endTime.getSelectionModel().isEmpty()){
+            Alert.invalidInput("End Time");
+            isValid = false;
+        }
+        if(title.getText().isBlank()){
+            Alert.invalidInput("Title");
+            isValid = false;
+        }
+        if(description.getText().isBlank()){
+            Alert.invalidInput("Description");
+            isValid = false;
+        }
+        if(location.getText().isBlank()){
+            Alert.invalidInput("Location");
+            isValid = false;
+        }
+        if(contact.getValue() == null){
+            Alert.invalidInput("Contact");
+            isValid = false;
+        }
+        if(type.getValue() == null){
+            Alert.invalidInput("Type");
+            isValid = false;
+        }
+        if(customer.getValue() == null){
+            Alert.invalidInput("Customer");
+            isValid = false;
+        }
+        if(user.getValue() == null){
+            Alert.invalidInput("User");
+            isValid = false;
+        }
+        return isValid;
     }
 
     /**
