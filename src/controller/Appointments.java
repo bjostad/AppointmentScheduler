@@ -16,7 +16,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.Appointment;
 import utils.Alert;
@@ -28,6 +27,8 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 /**
+ * Appointments controller
+ *
  * @author BJ Bjostad
  */
 public class Appointments implements Initializable {
@@ -66,44 +67,50 @@ public class Appointments implements Initializable {
     private static AppointmentDAO appointmentDAO = new AppointmentDAOImpl();
     private static Appointment selectedAppointment = null;
 
+    /**
+     * Create new database connection
+     * Populate appointment table
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        try {
             DBConnection.makeConnection();
             populateAppointmentTable();
-
-        } catch (Exception e) {
-            //TODO error handling
-            System.out.println(e);
-        }
     }
 
+    /**
+     * Get selected Appointment
+     * @return Appointment
+     */
     public static Appointment getSelectedAppointment() {
         return selectedAppointment;
     }
 
+    /**
+     * Obtain filtered appointment list and populate table
+     */
     private void populateAppointmentTable(){
         ObservableList<Appointment> filteredAppointments = filterAppointments();
-        try{
-            //TODO remove testing line below
-            System.out.println(filteredAppointments);
-            appointmentTable.setItems(filteredAppointments);
-            appointmentIdColumn.setCellValueFactory(new PropertyValueFactory<>("ID"));
-            startDateTimeColumn.setCellValueFactory(new PropertyValueFactory<>("start"));
-            endDateTimeColumn.setCellValueFactory(new PropertyValueFactory<>("end"));
-            titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-            descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-            locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
-            contactColumn.setCellValueFactory(new PropertyValueFactory<>("contactName"));
-            typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
-            customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("customerName"));
-            userIdColumn.setCellValueFactory(new PropertyValueFactory<>("userID"));
-        } catch (Exception e) {
-            //TODO error handling
-            System.out.println(e);
-        }
+        appointmentTable.setItems(filteredAppointments);
+        appointmentIdColumn.setCellValueFactory(new PropertyValueFactory<>("ID"));
+        startDateTimeColumn.setCellValueFactory(new PropertyValueFactory<>("start"));
+        endDateTimeColumn.setCellValueFactory(new PropertyValueFactory<>("end"));
+        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+        locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
+        contactColumn.setCellValueFactory(new PropertyValueFactory<>("contactName"));
+        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("customerName"));
+        userIdColumn.setCellValueFactory(new PropertyValueFactory<>("userID"));
     }
 
+    /**
+     * lambda expression - easily/simply allows filtering appointments to next week or month depending on selection
+     *
+     * Filter Appointments based on selected filter radio button
+     * @return ObservableList<Appointment> Appointments
+     */
     private ObservableList<Appointment> filterAppointments(){
         ObservableList<Appointment> allAppointments = appointmentDAO.getAllAppointments();
         if(filterSevenDays.isSelected()){
@@ -123,72 +130,52 @@ public class Appointments implements Initializable {
         }
     }
 
-    @FXML
-    private void onAppointmentSelected(MouseEvent mouseEvent) {
-        try{
-            selectedAppointment = (Appointment) appointmentTable.getSelectionModel().getSelectedItem();
-        } catch (Exception e) {
-            //TODO error handling
-            System.out.println(e);
-        }
-        //TODO remove along with fxml element
-    }
-
+    /**
+     * Clear selectedAppointment and load NewEditAppointment
+     * @param actionEvent
+     */
     @FXML
     private void onNewAppointmentButton(ActionEvent actionEvent) {
-        try {
-            selectedAppointment = null;
-            DBConnection.closeConnection();
-            changeScene( actionEvent, "NewEditAppointment");
-
-        } catch (Exception e) {
-            //TODO error handling
-            System.out.println(e);
-        }
+        selectedAppointment = null;
+        DBConnection.closeConnection();
+        changeScene( actionEvent, "NewEditAppointment");
     }
 
+    /**
+     * Set selectedAppointment and load NewEditAppointment.
+     * @param actionEvent
+     */
     @FXML
     private void onEditAppointmentButton(ActionEvent actionEvent) {
-        try{
-            selectedAppointment = (Appointment) appointmentTable.getSelectionModel().getSelectedItem();
-            if (appointmentTable.getSelectionModel().getSelectedItem() != null) {
-                try {
-                    DBConnection.closeConnection();
-                    changeScene( actionEvent, "NewEditAppointment");
-
-                } catch (Exception e) {
-                    //TODO error handling
-                    System.out.println(e);
-                }
-            } else {
-                Alert.warn("Invalid Selection",
-                        "Invalid Selection",
-                        "Please select an appointment.");
-            }
-        } catch (Exception e) {
-            //TODO error handling
-            System.out.println(e);
+        selectedAppointment = (Appointment) appointmentTable.getSelectionModel().getSelectedItem();
+        if (appointmentTable.getSelectionModel().getSelectedItem() != null) {
+            DBConnection.closeConnection();
+            changeScene( actionEvent, "NewEditAppointment");
+        } else {
+            Alert.warn("Invalid Selection",
+                    "Invalid Selection",
+                    "Please select an appointment.");
         }
     }
 
+    /**
+     * Set selectedAppointment and delete it after confirmation
+     * @param actionEvent
+     */
     @FXML
     private void onDeleteAppointmentButton(ActionEvent actionEvent) {
+        selectedAppointment = (Appointment) appointmentTable.getSelectionModel().getSelectedItem();
         if (appointmentTable.getSelectionModel().getSelectedItem() != null) {
             if (Alert.confirm("Cancel Appointment",
-                    "Cancel Appointment",
-                    "Are you sure you want to cancel this appointment?")){
-                try {
-                    if(appointmentDAO.deleteAppointment(selectedAppointment.getID())){
-                        Alert.info("Appointment Canceled",
-                                "Appointment Canceled Successfully",
-                                "Appointment "+selectedAppointment.getID()+
-                                        " of type "+selectedAppointment.getType()+" has been canceled.");
-                    }
-                    populateAppointmentTable();
-                } catch (Exception e){
-                    //TODO error handling
-                    System.out.println(e);
+                "Cancel Appointment",
+                "Are you sure you want to cancel this appointment?")){
+                if(appointmentDAO.deleteAppointment(selectedAppointment.getID())){
+                    Alert.info("Appointment Canceled",
+                            "Appointment Canceled Successfully",
+                            "Appointment "+selectedAppointment.getID()+
+                                    " of type "+selectedAppointment.getType()+" has been canceled.");
                 }
+                populateAppointmentTable();
             }
         } else {
             Alert.warn("Invalid Selection",
@@ -197,43 +184,58 @@ public class Appointments implements Initializable {
         }
     }
 
+    /**
+     * Load Customers scene
+     * @param actionEvent
+     */
     @FXML
-    private void onCustomerButton(ActionEvent actionEvent) throws IOException {
-        try {
-            DBConnection.closeConnection();
-            changeScene( actionEvent, "Customers");
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+    private void onCustomerButton(ActionEvent actionEvent) {
+        DBConnection.closeConnection();
+        changeScene( actionEvent, "Customers");
     }
 
+    /**
+     * Load Reports Scene
+     * @param actionEvent
+     */
     @FXML
     private void onReportsButton(ActionEvent actionEvent) {
-        try {
-            DBConnection.closeConnection();
-            changeScene( actionEvent, "Reports");
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        DBConnection.closeConnection();
+        changeScene( actionEvent, "Reports");
     }
 
+    /**
+     * repopulate appointmentTable to show all Appointments
+     * @param actionEvent
+     */
     @FXML
     private void onFilterAll(ActionEvent actionEvent) {
         populateAppointmentTable();
     }
 
+    /**
+     * repopulate appointmentTable to show the next weeks Appointments
+     * @param actionEvent
+     */
     @FXML
     private void onFilterSevenDays(ActionEvent actionEvent) {
         populateAppointmentTable();
     }
 
+    /**
+     * repopulate appointmentTable to show the next months Appointments
+     * @param actionEvent
+     */
     @FXML
     private void onFilterMonth(ActionEvent actionEvent) {
         populateAppointmentTable();
     }
 
+    /**
+     * Close application after confirming intent
+     * @param actionEvent
+     * @throws Exception
+     */
     @FXML
     private void onExitButton(ActionEvent actionEvent) throws Exception {
         if (utils.Alert.confirm("Exit",
@@ -245,6 +247,11 @@ public class Appointments implements Initializable {
         }
     }
 
+    /**
+     * change scene
+     * @param actionEvent
+     * @param sceneName
+     */
     private void changeScene (ActionEvent actionEvent, String sceneName){
         try {
             stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
@@ -257,6 +264,4 @@ public class Appointments implements Initializable {
             System.out.println(e);
         }
     }
-
-
 }

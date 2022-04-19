@@ -21,6 +21,8 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 /**
+ * Reports Controller
+ *
  * @author BJ Bjostad
  */
 public class Reports implements Initializable {
@@ -67,7 +69,7 @@ public class Reports implements Initializable {
     }
 
     /**
-     *output schedule of all appointments for the selected contact
+     * Output schedule of all appointments for the selected contact
      * @param actionEvent
      */
     @FXML
@@ -98,16 +100,16 @@ public class Reports implements Initializable {
     }
 
     /**
-     * output distinct sorted list of all the contacts customer
+     * lambda expression - easily/simply allows filtering of Appointments to only those for a specific contact
+     * Outputs distinct sorted list of all customers for a specific contact
      * @param actionEvent
      */
     @FXML
     private void onContactCustomers(ActionEvent actionEvent) {
         reportsTextArea.clear();
         allAppointments = appointmentDAO.getAllAppointments();
-        ObservableList<String> contactsCustomer = FXCollections.observableArrayList();
         if(contactComboBox.getValue() != null){
-            contactsCustomer = allAppointments.stream()
+            ObservableList<String> contactsCustomer = allAppointments.stream()
                     .filter(a -> a.getContactName().equals(contactComboBox.getValue().toString()))
                     .map(Appointment::getCustomerName)
                     .distinct()
@@ -122,14 +124,14 @@ public class Reports implements Initializable {
     }
 
     /**
-     * populate contact combo box
+     * Populate contact combo box
      */
     private void populateContactComboBox() {
         contactComboBox.setItems(contactDAO.getAllContacts());
     }
 
     /**
-     * populate type combo box
+     * Populate type combo box
      */
     private void populateTypeComboBox() {
         ObservableList<String> allTypes = FXCollections.observableArrayList();
@@ -143,7 +145,7 @@ public class Reports implements Initializable {
     }
 
     /**
-     * populate month combo box
+     * Populate month combo box
      */
     private void populateMonthComboBox() {
 
@@ -166,7 +168,7 @@ public class Reports implements Initializable {
     }
 
     /**
-     * return to appointments menu
+     * Return to appointments menu
      * @param actionEvent
      */
     @FXML

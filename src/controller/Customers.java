@@ -18,10 +18,11 @@ import utils.Alert;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 /**
+ * Customer controller
+ *
  * @author BJ Bjostad
  */
 public class Customers implements Initializable {
@@ -72,69 +73,50 @@ public class Customers implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        try {
-            DBConnection.makeConnection();
-            populateCustomerTable();
-            populateCountryComboBox();
-        } catch (Exception e) {
-            //TODO real error handling
-        }
+        DBConnection.makeConnection();
+        populateCustomerTable();
+        populateCountryComboBox();
     }
 
     /**
-     * populate customer table with all existing customers
+     * Populate customer table with all existing customers
      */
     private void populateCustomerTable() {
-        try {
-            ObservableList<Customer> customers = customerDAO.getAllCustomers();
-            System.out.println("customer"+ customers);
-            customerTable.setItems(customers);
-            idColumn.setCellValueFactory(new PropertyValueFactory<>("ID"));
-            nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-            phoneNumberColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
-            addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
-            postalCodeColumn.setCellValueFactory(new PropertyValueFactory<>("postalCode"));
-            countryColumn.setCellValueFactory(new PropertyValueFactory<>("country"));
-            firstLevelDivisionColumn.setCellValueFactory(new PropertyValueFactory<>("division"));
-        } catch (Exception e) {
-            //TODO real error handling
-            System.out.println("Populate customer table error: "+e);
-        }
+        ObservableList<Customer> customers = customerDAO.getAllCustomers();
+        customerTable.setItems(customers);
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("ID"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        phoneNumberColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
+        addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+        postalCodeColumn.setCellValueFactory(new PropertyValueFactory<>("postalCode"));
+        countryColumn.setCellValueFactory(new PropertyValueFactory<>("country"));
+        firstLevelDivisionColumn.setCellValueFactory(new PropertyValueFactory<>("division"));
     }
 
     /**
-     * populate country combobox with countries from database
+     * Populate country combobox with countries from database
      */
     private void populateCountryComboBox() {
-        try {
-            country.setItems(customerDAO.getAllCountries());
-        } catch (Exception e) {
-            //TODO real error handling
-            System.out.println(e);
-        }
+        country.setItems(customerDAO.getAllCountries());
     }
 
     /**
-     * populate division with proper entries based on selected country
+     * Populate division with proper entries based on selected country
      * @param actionEvent
      */
     @FXML
     private void onCountrySelected(ActionEvent actionEvent) {
-        try {
-            String country = (String)this.country.getSelectionModel().getSelectedItem();
-            firstLevelDivision.setItems((customerDAO.getCountryDivisions(country)));
-        } catch (Exception e){
-            //TODO error handling
-        }
+        String country = (String)this.country.getSelectionModel().getSelectedItem();
+        firstLevelDivision.setItems((customerDAO.getCountryDivisions(country)));
     }
 
     /**
-     * populate update fields with selected customer
+     * Populate update fields with selected customer
      * @param mouseEvent
      */
     @FXML
     private void onCustomerTableClicked(MouseEvent mouseEvent) {
-        try{
+        if(customerTable.getSelectionModel().getSelectedItem() != null){
             Customer selectedCustomer = (Customer) customerTable.getSelectionModel().getSelectedItem();
             customerID.setText(String.valueOf(selectedCustomer.getID()));
             customerName.setText(selectedCustomer.getName());
@@ -144,60 +126,55 @@ public class Customers implements Initializable {
             country.getSelectionModel().select(selectedCustomer.getCountry());
             firstLevelDivision.getSelectionModel().select(selectedCustomer.getDivision());
             saveButton.setText("Update Customer");
-
-        } catch (Exception e){
-            //TODO actual error handling
-            System.out.println(e);
         }
     }
 
     /**
-     * create new customer or save changes to existing customer
+     * Create new customer or save changes to existing customer
      * confirm before saving
      * @param actionEvent
      */
     @FXML
     private void onSaveCustomerButton(ActionEvent actionEvent) {
-        try{
-            String divisionName = (String)firstLevelDivision.getSelectionModel().getSelectedItem();
-            int divisionID = customerDAO.getDivisionID(divisionName);
-            boolean isNew = (customerID.getText().charAt(0) == 'W');
-            int id = 0;
-            if(!isNew){
-              id = Integer.parseInt(customerID.getText());
-            }
-            if(validateInput()){
-                Customer customer = new Customer(id,
-                        customerName.getText(),
-                        address.getText(),
-                        postalCode.getText(),
-                        phoneNumber.getText(),
-                        divisionID,
-                        divisionName,
-                        0,
-                        null);
-                if(isNew){
-                    if(Alert.confirm("Create New Customer",
-                            "Create New Customer "+customer.getName()+"?",
-                            "Are you sure you want to create a new customer?")){
-                        customerDAO.createNewCustomer(customer);
-                    }
+        String divisionName = (String)firstLevelDivision.getSelectionModel().getSelectedItem();
+        int divisionID = customerDAO.getDivisionID(divisionName);
+        boolean isNew = (customerID.getText().charAt(0) == 'W');
+        int id = 0;
+        if(!isNew){
+          id = Integer.parseInt(customerID.getText());
+        }
+        if(validateInput()){
+            Customer customer = new Customer(id,
+                    customerName.getText(),
+                    address.getText(),
+                    postalCode.getText(),
+                    phoneNumber.getText(),
+                    divisionID,
+                    divisionName,
+                    0,
+                    null);
+            if(isNew){
+                if(Alert.confirm("Create New Customer",
+                        "Create New Customer "+customer.getName()+"?",
+                        "Are you sure you want to create a new customer?")){
+                    customerDAO.createNewCustomer(customer);
+                }
 
-                } else {
-                    if(Alert.confirm("Update Customer",
-                            "Update Customer "+customer.getName()+"?",
-                            "Are you sure you want to update?")){
-                        customerDAO.updateCustomer(customer);
-                    }
+            } else {
+                if(Alert.confirm("Update Customer",
+                        "Update Customer "+customer.getName()+"?",
+                        "Are you sure you want to update?")){
+                    customerDAO.updateCustomer(customer);
                 }
             }
-            populateCustomerTable();
-        } catch (Exception e){
-            //TODO error handling
-            System.out.println(e);
         }
+        populateCustomerTable();
     }
 
+    /**
+     * Validate input, present error for input if its invalid
+     * @return true if all input is valid
+     */
     private boolean validateInput(){
         boolean isValid = true;
         if(customerName.getText().isBlank()){
@@ -263,24 +240,19 @@ public class Customers implements Initializable {
             if(hasAppts > 0) {
                 Alert.warn("Action Cancelled",
                         "Unable To Delete "+ selectedCustomerName,
-                        "Customer "+selectedCustomerName+" has " + hasAppts + " actively assigned appointment. " +
+                        "Customer "+selectedCustomerName+" has " + hasAppts + " actively assigned appointments. " +
                                 "Cancel all appointments before deleting customer.");
             } else {
                 if (Alert.confirm("Delete Customer",
                         "Delete Customer "+selectedCustomerName+"?",
                         "Are you sure?")){
-                    try {
-                        if(customerDAO.deleteCustomer(selectedCustomerID)){
-                            Alert.warn("Customer Deleted",
-                                    selectedCustomerName +" has been deleted.",
-                                    "Customer "+selectedCustomerID+" was successfully deleted.");
-                        }
-                        onNewCustomerButton(actionEvent);
-                        populateCustomerTable();
-                    } catch (Exception e){
-                        //TODO error handling
-                        System.out.println(e);
+                    if(customerDAO.deleteCustomer(selectedCustomerID)){
+                        Alert.warn("Customer Deleted",
+                                selectedCustomerName +" has been deleted.",
+                                "Customer "+selectedCustomerID+" was successfully deleted.");
                     }
+                    onNewCustomerButton(actionEvent);
+                    populateCustomerTable();
                 }
             }
         } else {

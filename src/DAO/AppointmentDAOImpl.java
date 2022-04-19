@@ -18,9 +18,7 @@ import java.time.LocalDateTime;
 public class AppointmentDAOImpl implements AppointmentDAO {
 
     /**
-     * retrieve all Appointments from the database
-     * includes contact, user, and customer info
-     * @return ObservableList<Appointment>
+     * {@inheritDoc}
      */
     @Override
     public ObservableList<Appointment> getAllAppointments(){
@@ -60,10 +58,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     }
 
     /**
-     * retrieve all Appointments for provided customer ID from the database
-     * includes contact, user, and customer info
-     * @param custID
-     * @return ObservableList<Appointment>
+     * {@inheritDoc}
      */
     @Override
     public ObservableList<Appointment> getAllCustomerAppointments(int custID){
@@ -105,9 +100,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     }
 
     /**
-     * inserts provided Appointment into database
-     * @param appointment
-     * @return true if successful
+     * {@inheritDoc}
      */
     @Override
     public boolean addAppointment(Appointment appointment){
@@ -140,9 +133,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     }
 
     /**
-     * updates provided Appointment in database
-     * @param appointment
-     * @return true if successful
+     * {@inheritDoc}
      */
     @Override
     public boolean updateAppointment(Appointment appointment) {
@@ -174,9 +165,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     }
 
     /**
-     * deletes provided Appointment from database
-     * @param appointmentID
-     * @return true if successful
+     * {@inheritDoc}
      */
     @Override
     public boolean deleteAppointment(int appointmentID) {

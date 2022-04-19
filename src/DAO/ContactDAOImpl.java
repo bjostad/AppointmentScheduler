@@ -14,8 +14,7 @@ import java.sql.SQLException;
 public class ContactDAOImpl implements ContactDAO{
 
     /**
-     * Get all Contacts from database
-     * @return ObservableList<Contact>
+     * {@inheritDoc}
      */
     @Override
     public ObservableList<Contact> getAllContacts(){
@@ -39,9 +38,7 @@ public class ContactDAOImpl implements ContactDAO{
     }
 
     /**
-     * retrieve Contact based on contact ID
-     * @param selectedContact
-     * @return Contact
+     * {@inheritDoc}
      */
     @Override
     public Contact getContactByID(int selectedContact){

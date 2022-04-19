@@ -9,11 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserDAOImpl implements UserDAO {
+
     /**
-     * get User from data base matching provided username
-     * check for matching password if User is found
-     * @param loginUsername username of login user
-     * @return User
+     * {@inheritDoc}
      */
     @Override
     public User getUser(String loginUsername) {
@@ -37,8 +35,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     /**
-     * get all Users from database
-     * @return ObservableList<User>
+     * {@inheritDoc}
      */
     @Override
     public ObservableList<User> getAllUsers(){
@@ -61,9 +58,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     /**
-     * get user ID based on provided username
-     * @param userName username
-     * @return int userID
+     * {@inheritDoc}
      */
     @Override
     public int getUserIDFromUserName(String userName){

@@ -10,7 +10,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import model.Appointment;
 import model.Contact;
@@ -21,13 +20,13 @@ import utils.Time;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Date;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 /**
+ * NewEditAppointment Controller
+ *
  * @author BJ Bjostad
  */
 public class NewEditAppointment implements Initializable {
@@ -66,67 +65,42 @@ public class NewEditAppointment implements Initializable {
     private Appointment selectedAppointment = Appointments.getSelectedAppointment();
     private boolean isNew;
 
+    /**
+     * intialize NewEditAppointment scene
+     * create database connection
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        try {
-            DBConnection.makeConnection();
-            startTime.setItems(setBusinessHours());
-            endTime.setItems(setBusinessHours());
-            populateUserComboBox();
-            populateCustomerComboBox();
-            populateTypeComboBox();
-            populateContactComboBox();
-            setupEditOrNew();
-        } catch (Exception e) {
-            //TODO error handling
-            e.printStackTrace();
-        }
-
+        DBConnection.makeConnection();
+        startTime.setItems(setBusinessHours());
+        endTime.setItems(setBusinessHours());
+        user.setItems(userDAO.getAllUsers());
+        customer.setItems(customerDAO.getAllCustomers());
+        populateTypeComboBox();
+        contact.setItems(contactDAO.getAllContacts());
+        setupEditOrNew();
     }
 
-    private void populateUserComboBox() {
-        try {
-            user.setItems(userDAO.getAllUsers());
-        } catch (Exception e) {
-            //TODO real error handling
-            System.out.println(e);
-        }
-    }
-
-    private void populateCustomerComboBox() {
-        try {
-            customer.setItems(customerDAO.getAllCustomers());
-        } catch (Exception e) {
-            //TODO real error handling
-            System.out.println(e);
-        }
-    }
-
-    private void populateContactComboBox() {
-        try {
-            contact.setItems(contactDAO.getAllContacts());
-        } catch (Exception e) {
-            //TODO real error handling
-            System.out.println(e);
-        }
-    }
-
+    /**
+     * populate type combo box with types
+     */
     private void populateTypeComboBox() {
-        try {
-            ObservableList<String> allTypes = FXCollections.observableArrayList();
-            allTypes.addAll(
-                    "Required",
-                    "Important",
-                    "Optional",
-                    "Should be an email"
-            );
-            type.setItems(allTypes);
-        } catch (Exception e) {
-            //TODO real error handling
-            System.out.println(e);
-        }
+        ObservableList<String> allTypes = FXCollections.observableArrayList();
+        allTypes.addAll(
+                "Required",
+                "Important",
+                "Optional",
+                "Should be an email"
+        );
+        type.setItems(allTypes);
     }
 
+    /**
+     * Convert 8am-10pm Eastern Time to local system timezone in 15 minute increments
+     * @return ObservableList<LocalTime> of business hours in local timezone
+     */
     private ObservableList<LocalTime> setBusinessHours(){
         ObservableList<LocalTime> businessHours = FXCollections.observableArrayList();
         LocalTime startHours = LocalTime.of(8,00).minusHours(Time.offsetTo("America/New_York"));
@@ -137,12 +111,15 @@ public class NewEditAppointment implements Initializable {
         return businessHours;
     }
 
+    /**
+     * Determine if creating a new Appointment or editing an existing Appointment
+     * Change scene label to reflect New vs Edit
+     * update fields with existing info if not new
+     */
     private void setupEditOrNew(){
         if(Appointments.getSelectedAppointment() != null){
-
             appointmentLabel.setText("Edit Appointment");
             isNew = false;
-
             appointmentID.setText(String.valueOf(selectedAppointment.getID()));
             date.setValue(selectedAppointment.getStart().toLocalDate());
             startTime.getSelectionModel().select(selectedAppointment.getStart().toLocalTime());
@@ -161,6 +138,11 @@ public class NewEditAppointment implements Initializable {
         }
     }
 
+    /**
+     * Check if Appointment is valid to be saved
+     * Alert if Appointment is not valid
+     * @param actionEvent
+     */
     @FXML
     private void onSaveButton(ActionEvent actionEvent) {
         //TODO check for conflicting existing appointment
@@ -186,33 +168,38 @@ public class NewEditAppointment implements Initializable {
         }
     }
 
+    /**
+     * Save provided Appointment to database
+     * update if existing
+     * insert if new
+     */
     private void saveAppointment(){
-        try {
-            model.Appointment createdAppointment = new model.Appointment(
-                    determineAppID(),
-                    title.getText(),
-                    description.getText(),
-                    location.getText(),
-                    type.getSelectionModel().getSelectedItem(),
-                    getStartDateTime(),
-                    getEndDateTime(),
-                    customer.getSelectionModel().getSelectedItem().getID(),
-                    customer.getSelectionModel().getSelectedItem().getName(),
-                    user.getSelectionModel().getSelectedItem().getID(),
-                    user.getSelectionModel().getSelectedItem().getUsername(),
-                    contact.getSelectionModel().getSelectedItem().getID(),
-                    contact.getSelectionModel().getSelectedItem().getName());
-            if (isNew) {
-                appointmentDAO.addAppointment(createdAppointment);
-            } else {
-                appointmentDAO.updateAppointment(createdAppointment);
-            }
-        } catch (Exception e){
-            //TODO capture and alert proper invalid entries
-            System.out.println(e);
+        model.Appointment createdAppointment = new model.Appointment(
+                determineAppID(),
+                title.getText(),
+                description.getText(),
+                location.getText(),
+                type.getSelectionModel().getSelectedItem(),
+                getStartDateTime(),
+                getEndDateTime(),
+                customer.getSelectionModel().getSelectedItem().getID(),
+                customer.getSelectionModel().getSelectedItem().getName(),
+                user.getSelectionModel().getSelectedItem().getID(),
+                user.getSelectionModel().getSelectedItem().getUsername(),
+                contact.getSelectionModel().getSelectedItem().getID(),
+                contact.getSelectionModel().getSelectedItem().getName());
+        if (isNew) {
+            appointmentDAO.addAppointment(createdAppointment);
+        } else {
+            appointmentDAO.updateAppointment(createdAppointment);
         }
     }
 
+    /**
+     * Validate input from form
+     * Alert if input is invalid
+     * @return
+     */
     private boolean validateInput(){
         boolean isValid = true;
         if(date.getValue() == null){
@@ -225,6 +212,11 @@ public class NewEditAppointment implements Initializable {
         }
         if(endTime.getSelectionModel().isEmpty()){
             Alert.invalidInput("End Time");
+            isValid = false;
+        }
+        if(getEndDateTime().isBefore(getStartDateTime())
+                ||getEndDateTime().equals(getStartDateTime())){
+            Alert.invalidInput("End Time is not after Start Time and");
             isValid = false;
         }
         if(title.getText().isBlank()){
@@ -259,40 +251,29 @@ public class NewEditAppointment implements Initializable {
     }
 
     /**
-     * validateAppointment()
-     * checks appointments date/time to make sure there is no conflict
+     * Check appointment date/time to make sure there is no conflict
      * only compares against existing appointments for selected customer
      * @return boolean
      */
     private boolean validateAppointment(){
         LocalDateTime startDateTime = getStartDateTime();
         LocalDateTime endDateTime = getEndDateTime();
-        ObservableList<Appointment> conflictingAppointments = FXCollections.observableArrayList();
-        try{
-            ObservableList<Appointment> allCustomerAppointments =
-                    appointmentDAO.getAllCustomerAppointments(customer.getValue().getID());
-            conflictingAppointments = allCustomerAppointments.stream()
-                    .filter(a -> a.getID() != Integer.parseInt(appointmentID.getText()))
-                    .filter(a -> ((startDateTime.isAfter(a.getStart()) || startDateTime.isEqual(a.getStart()))
-                                    && startDateTime.isBefore(a.getEnd()))
-                            || (endDateTime.isAfter(a.getStart()) && (endDateTime.isBefore(a.getEnd())
-                                    || endDateTime.isEqual(a.getEnd())))
-                            || (startDateTime.isBefore(a.getStart()) && endDateTime.isAfter(a.getEnd()))
-                            || (startDateTime.isEqual(a.getStart()) && endDateTime.isEqual(a.getEnd())))
-                    .collect(Collectors.toCollection(FXCollections::observableArrayList));
-        } catch (Exception e){
-            //TODO Error handling
-            System.out.println(e);
-        }
-        System.out.println(conflictingAppointments);
-        if (conflictingAppointments.isEmpty()){
-            return true;
-        }
-        return false;
+        ObservableList<Appointment> conflictingAppointments;
+        ObservableList<Appointment> allCustomerAppointments =
+                appointmentDAO.getAllCustomerAppointments(customer.getValue().getID());
+        conflictingAppointments = allCustomerAppointments.stream()
+                .filter(a -> a.getID() != determineAppID())
+                .filter(a -> ((startDateTime.isAfter(a.getStart()) || startDateTime.isEqual(a.getStart()))
+                                && startDateTime.isBefore(a.getEnd()))
+                        || (endDateTime.isAfter(a.getStart()) && (endDateTime.isBefore(a.getEnd())
+                                || endDateTime.isEqual(a.getEnd())))
+                        || (startDateTime.isBefore(a.getStart()) && endDateTime.isAfter(a.getEnd()))
+                        || (startDateTime.isEqual(a.getStart()) && endDateTime.isEqual(a.getEnd())))
+                .collect(Collectors.toCollection(FXCollections::observableArrayList));
+        return conflictingAppointments.isEmpty();
     }
 
     /**
-     * getStartDateTime
      * convert input date and time into localDateTime
      * correct day if time selected is the next day
      * @return LocalDateTime
@@ -307,7 +288,6 @@ public class NewEditAppointment implements Initializable {
     }
 
     /**
-     * getEndDateTime
      * convert input date and time to localDateTime
      * correct day if time selected is the next day
      * @return localDateTime
@@ -321,6 +301,10 @@ public class NewEditAppointment implements Initializable {
         return endDateTime;
     }
 
+    /**
+     * Determine correct Appointment ID
+     * @return int Appointments ID if it already exists, 0 if it is new
+     */
     private int determineAppID(){
         if (!isNew){
             return Integer.parseInt(appointmentID.getText());
@@ -328,8 +312,12 @@ public class NewEditAppointment implements Initializable {
         return 0;
     }
 
+    /**
+     * Return to Appointment scene after confirming intention
+     * @param actionEvent
+     */
     @FXML
-    private void returnToAppointmentsButton(ActionEvent actionEvent) throws Exception {
+    private void returnToAppointmentsButton(ActionEvent actionEvent){
         if (utils.Alert.confirm("Return",
                 "Return to Appointments?",
                 "Are you sure you want to return to the Appointments menu without saving?")) {
@@ -338,6 +326,11 @@ public class NewEditAppointment implements Initializable {
         }
     }
 
+    /**
+     * change scene
+     * @param actionEvent
+     * @param sceneName
+     */
     private void changeScene (ActionEvent actionEvent, String sceneName){
         try {
             stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();

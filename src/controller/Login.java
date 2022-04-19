@@ -20,13 +20,18 @@ import utils.Alert;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+
+/**
+ * Login Controller
+ *
+ * @author BJ Bjostad
+ */
 
 public class Login implements Initializable {
 
@@ -74,8 +79,6 @@ public class Login implements Initializable {
     /**
      * Check username and password and load application
      * @param actionEvent
-     * @throws SQLException
-     * @throws Exception
      */
     @FXML
     private void onLogInButton(ActionEvent actionEvent) {
@@ -96,6 +99,12 @@ public class Login implements Initializable {
         }
     }
 
+    /**
+     * write login attempt to login_activity.txt at root
+     * record user, success/failure, time, and offset from UTC
+     * @param username
+     * @param loginSuccess
+     */
     private void logLoginAttempt(String username, boolean loginSuccess){
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         try{
@@ -116,6 +125,10 @@ public class Login implements Initializable {
         }
     }
 
+    /**
+     * Check for appointment within 15 minutes of login.
+     * Alert for each appointment or none
+     */
     private void checkUpcomingAppointment(){
         ObservableList<Appointment> allAppointments = appointmentDAO.getAllAppointments();
         ObservableList<Appointment> upcomingAppointments;
@@ -132,7 +145,7 @@ public class Login implements Initializable {
                             a.getStart().toLocalTime()+" "+a.getStart().toLocalDate());
         }
         if(upcomingAppointments.isEmpty()){
-            Alert.warn("Upcoming Appointment",
+            Alert.info("Upcoming Appointment",
                     "No upcoming appointments.",
                     "There are no upcoming appointments within 15 minutes.");
         }
@@ -156,13 +169,15 @@ public class Login implements Initializable {
             System.out.println(e);
         }
     }
+
+    /**
+     * create databaseconnection and set labels based on locale
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        try {
-            DBConnection.makeConnection();
-        } catch (Exception e) {
-            //TODO error handling
-        }
+        DBConnection.makeConnection();
         timeZoneSelectionLabel.setText(ZoneId.systemDefault().toString());
         timeZoneLabel.setText(language.getString("timeZoneLabel"));
         logInButton.setText(language.getString("logInButton"));

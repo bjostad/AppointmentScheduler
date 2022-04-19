@@ -7,6 +7,17 @@ import model.Contact;
  * @author BJ Bjostad
  */
 public interface ContactDAO {
-    public ObservableList<Contact> getAllContacts();
-    public Contact getContactByID(int selectedContact);
+
+    /**
+     * Get all Contacts from database
+     * @return ObservableList<Contact>
+     */
+    ObservableList<Contact> getAllContacts();
+
+    /**
+     * retrieve Contact based on contact ID
+     * @param selectedContact
+     * @return Contact
+     */
+    Contact getContactByID(int selectedContact);
 }

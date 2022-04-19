@@ -13,9 +13,9 @@ import java.sql.SQLException;
  * @author BJ Bjostad
  */
 public class CustomerDAOImpl implements CustomerDAO{
+
     /**
-     * get all Customers from database
-     * @return ObservableList<Customer>
+     * {@inheritDoc}
      */
     @Override
     public ObservableList<Customer> getAllCustomers(){
@@ -48,10 +48,9 @@ public class CustomerDAOImpl implements CustomerDAO{
         return null;
     }
 
+
     /**
-     * get Customer by provided customer id
-     * @param selectedCustomerID id of customer
-     * @return Customer
+     * {@inheritDoc}
      */
     @Override
     public Customer getCustomerByID(int selectedCustomerID){
@@ -82,9 +81,9 @@ public class CustomerDAOImpl implements CustomerDAO{
         return null;
     }
 
+
     /**
-     * retrieve list of all countries from database
-     * @return ObservableList<String>
+     * {@inheritDoc}
      */
     @Override
     public ObservableList<String> getAllCountries(){
@@ -103,10 +102,9 @@ public class CustomerDAOImpl implements CustomerDAO{
         return countries;
     }
 
+
     /**
-     * retrieve country ID from provided country name
-     * @param country country name
-     * @return int country ID
+     * {@inheritDoc}
      */
     @Override
     public int getCountryID(String country){
@@ -125,10 +123,9 @@ public class CustomerDAOImpl implements CustomerDAO{
         return 0;
     }
 
+
     /**
-     * retrieve list of all divisions of provided country
-     * @param country country name
-     * @return ObservableList<String> divisions
+     * {@inheritDoc}
      */
     @Override
     public ObservableList<String> getCountryDivisions(String country) {
@@ -150,10 +147,9 @@ public class CustomerDAOImpl implements CustomerDAO{
         return null;
     }
 
+
     /**
-     * retrieve division ID from provided division name
-     * @param division division name
-     * @return int division ID
+     * {@inheritDoc}
      */
     @Override
     public int getDivisionID(String division){
@@ -172,10 +168,9 @@ public class CustomerDAOImpl implements CustomerDAO{
         return 0;
     }
 
+
     /**
-     * update provided Customer in the database
-     * @param customer Customer
-     * @return true if successful
+     * {@inheritDoc}
      */
     @Override
     public boolean updateCustomer(Customer customer){
@@ -202,10 +197,9 @@ public class CustomerDAOImpl implements CustomerDAO{
         return false;
     }
 
+
     /**
-     * inserts provided Customer into database
-     * @param customer Customer
-     * @return true if successful
+     * {@inheritDoc}
      */
     @Override
     public boolean createNewCustomer(Customer customer){
@@ -232,9 +226,7 @@ public class CustomerDAOImpl implements CustomerDAO{
     }
 
     /**
-     * delete Customer by provided customer ID
-     * @param customerID customer ID
-     * @return true if successful
+     * {@inheritDoc}
      */
     @Override
     public boolean deleteCustomer(int customerID){
