@@ -43,6 +43,8 @@ public class Reports implements Initializable {
     public ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
 
     /**
+     * lambda expression - easily/simply allows filtering of appointments to specified type and month
+     *
      * output number of appointments by selected month and type
      * @param actionEvent
      */
@@ -69,6 +71,8 @@ public class Reports implements Initializable {
     }
 
     /**
+     * lambda expression - easily/simply allows filtering of Appointments to only those for specified contact
+     *
      * Output schedule of all appointments for the selected contact
      * @param actionEvent
      */
@@ -101,6 +105,7 @@ public class Reports implements Initializable {
 
     /**
      * lambda expression - easily/simply allows filtering of Appointments to only those for a specific contact
+     *
      * Outputs distinct sorted list of all customers for a specific contact
      * @param actionEvent
      */

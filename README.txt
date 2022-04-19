@@ -26,5 +26,4 @@ How to use Application Scheduler:
 4. You are now ready to use the application, enjoy!
 
 Additional Report:
-    The additional report will present a sorted list of all the customers a contact has or will work with,
-    without presenting duplicates.
+    The additional report will present a sorted list of all the customers a contact has or will work with, without presenting duplicates.

@@ -126,6 +126,8 @@ public class Login implements Initializable {
     }
 
     /**
+     * lambda expression - easily/simply allows filtering appointments occurring in the next 15 minutes
+     *
      * Check for appointment within 15 minutes of login.
      * Alert for each appointment or none
      */

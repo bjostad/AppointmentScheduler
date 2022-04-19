@@ -251,6 +251,8 @@ public class NewEditAppointment implements Initializable {
     }
 
     /**
+     * lambda expression - easily/simply allows filtering appointments that conflict with current Appointment
+     *
      * Check appointment date/time to make sure there is no conflict
      * only compares against existing appointments for selected customer
      * @return boolean
