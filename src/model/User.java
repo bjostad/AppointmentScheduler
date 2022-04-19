@@ -19,6 +19,10 @@ public class User {
         this.password = password;
     }
 
+    /**
+     * Override string output to display User name
+     * @return String
+     */
     @Override
     public String toString(){
         return this.username;

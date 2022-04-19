@@ -11,9 +11,9 @@ public class Alert {
 
     /**
      * Present warning alert
-     * @param title
-     * @param header
-     * @param content
+     * @param title title text
+     * @param header header text
+     * @param content content text
      */
     public static void warn(String title, String header, String content) {
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
@@ -25,9 +25,9 @@ public class Alert {
 
     /**
      * Present confirmation alert and check if user clicks ok
-     * @param title
-     * @param header
-     * @param content
+     * @param title title text
+     * @param header header text
+     * @param content content text
      * @return boolean true if OK clicked
      */
     public static boolean confirm(String title, String header, String content) {
@@ -44,9 +44,9 @@ public class Alert {
 
     /**
      * Present informational alert
-     * @param title
-     * @param header
-     * @param content
+     * @param title title text
+     * @param header header text
+     * @param content content text
      */
     public static void info(String title, String header, String content) {
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
@@ -56,6 +56,10 @@ public class Alert {
         Optional<ButtonType> exit = alert.showAndWait();
     }
 
+    /**
+     * Present invalid input alert
+     * @param input input name
+     */
     public static void invalidInput(String input){
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
         alert.setTitle("Invalid Input");

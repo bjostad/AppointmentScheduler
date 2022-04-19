@@ -4,7 +4,6 @@ import controller.Login;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.Customer;
-import model.User;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,13 +13,17 @@ import java.sql.SQLException;
  * @author BJ Bjostad
  */
 public class CustomerDAOImpl implements CustomerDAO{
+    /**
+     * get all Customers from database
+     * @return ObservableList<Customer>
+     */
     @Override
     public ObservableList<Customer> getAllCustomers(){
+        ObservableList<Customer> customers = FXCollections.observableArrayList();
+        String getAllCustomersSQL = "SELECT * FROM CUSTOMERS " +
+                "LEFT JOIN FIRST_LEVEL_DIVISIONS ON CUSTOMERS.DIVISION_ID = FIRST_LEVEL_DIVISIONS.DIVISION_ID " +
+                "LEFT JOIN COUNTRIES ON FIRST_LEVEL_DIVISIONS.COUNTRY_ID = COUNTRIES.COUNTRY_ID";
         try{
-            ObservableList<Customer> customers = FXCollections.observableArrayList();
-            String getAllCustomersSQL = "SELECT * FROM CUSTOMERS " +
-                    "LEFT JOIN FIRST_LEVEL_DIVISIONS ON CUSTOMERS.DIVISION_ID = FIRST_LEVEL_DIVISIONS.DIVISION_ID " +
-                    "LEFT JOIN COUNTRIES ON FIRST_LEVEL_DIVISIONS.COUNTRY_ID = COUNTRIES.COUNTRY_ID";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getAllCustomersSQL);
             ResultSet results = pStatement.executeQuery();
             while(results.next()){
@@ -45,13 +48,18 @@ public class CustomerDAOImpl implements CustomerDAO{
         return null;
     }
 
+    /**
+     * get Customer by provided customer id
+     * @param selectedCustomerID id of customer
+     * @return Customer
+     */
     @Override
     public Customer getCustomerByID(int selectedCustomerID){
+        String getAllCustomerByIDSQL = "SELECT * FROM CUSTOMERS " +
+                "LEFT JOIN FIRST_LEVEL_DIVISIONS ON CUSTOMERS.DIVISION_ID = FIRST_LEVEL_DIVISIONS.DIVISION_ID " +
+                "LEFT JOIN COUNTRIES ON FIRST_LEVEL_DIVISIONS.COUNTRY_ID = COUNTRIES.COUNTRY_ID " +
+                "WHERE CUSTOMER_ID = ?";
         try{
-            String getAllCustomerByIDSQL = "SELECT * FROM CUSTOMERS " +
-                    "LEFT JOIN FIRST_LEVEL_DIVISIONS ON CUSTOMERS.DIVISION_ID = FIRST_LEVEL_DIVISIONS.DIVISION_ID " +
-                    "LEFT JOIN COUNTRIES ON FIRST_LEVEL_DIVISIONS.COUNTRY_ID = COUNTRIES.COUNTRY_ID " +
-                    "WHERE CUSTOMER_ID = ?";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getAllCustomerByIDSQL);
             pStatement.setInt(1,selectedCustomerID);
             ResultSet results = pStatement.executeQuery();
@@ -74,6 +82,10 @@ public class CustomerDAOImpl implements CustomerDAO{
         return null;
     }
 
+    /**
+     * retrieve list of all countries from database
+     * @return ObservableList<String>
+     */
     @Override
     public ObservableList<String> getAllCountries(){
         ObservableList<String> countries = FXCollections.observableArrayList();
@@ -91,10 +103,15 @@ public class CustomerDAOImpl implements CustomerDAO{
         return countries;
     }
 
+    /**
+     * retrieve country ID from provided country name
+     * @param country country name
+     * @return int country ID
+     */
     @Override
     public int getCountryID(String country){
+        String getCountryIDSQL = "SELECT COUNTRY_ID FROM COUNTRIES WHERE COUNTRY = ?";
         try {
-          String getCountryIDSQL = "SELECT COUNTRY_ID FROM COUNTRIES WHERE COUNTRY = ?";
           PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getCountryIDSQL);
           pStatement.setString(1,country);
           ResultSet result = pStatement.executeQuery();
@@ -108,29 +125,17 @@ public class CustomerDAOImpl implements CustomerDAO{
         return 0;
     }
 
-    @Override
-    public int getDivisionID(String division){
-        try {
-            String getDivisionyIDSQL = "SELECT DIVISION_ID FROM FIRST_LEVEL_DIVISIONS WHERE DIVISION = ?";
-            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getDivisionyIDSQL);
-            pStatement.setString(1,division);
-            ResultSet result = pStatement.executeQuery();
-            while(result.next()) {
-                return result.getInt("Division_ID");
-            }
-        } catch (SQLException e) {
-            //TODO error handling
-            System.out.println("Error getting divsion ID: "+e);
-        }
-        return 0;
-    }
-
+    /**
+     * retrieve list of all divisions of provided country
+     * @param country country name
+     * @return ObservableList<String> divisions
+     */
     @Override
     public ObservableList<String> getCountryDivisions(String country) {
+        int countryID = getCountryID(country);
+        ObservableList<String> divisions = FXCollections.observableArrayList();
+        String getAllDivisionsSQL = "SELECT DIVISION FROM FIRST_LEVEL_DIVISIONS WHERE COUNTRY_ID = ?";
         try{
-            int countryID = getCountryID(country);
-            ObservableList<String> divisions = FXCollections.observableArrayList();
-            String getAllDivisionsSQL = "SELECT DIVISION FROM FIRST_LEVEL_DIVISIONS WHERE COUNTRY_ID = ?";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getAllDivisionsSQL);
             pStatement.setInt(1,countryID);
             ResultSet results = pStatement.executeQuery();
@@ -145,12 +150,39 @@ public class CustomerDAOImpl implements CustomerDAO{
         return null;
     }
 
+    /**
+     * retrieve division ID from provided division name
+     * @param division division name
+     * @return int division ID
+     */
+    @Override
+    public int getDivisionID(String division){
+        String getDivisionyIDSQL = "SELECT DIVISION_ID FROM FIRST_LEVEL_DIVISIONS WHERE DIVISION = ?";
+        try {
+            PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getDivisionyIDSQL);
+            pStatement.setString(1,division);
+            ResultSet result = pStatement.executeQuery();
+            while(result.next()) {
+                return result.getInt("Division_ID");
+            }
+        } catch (SQLException e) {
+            //TODO error handling
+            System.out.println("Error getting divsion ID: "+e);
+        }
+        return 0;
+    }
+
+    /**
+     * update provided Customer in the database
+     * @param customer Customer
+     * @return true if successful
+     */
     @Override
     public boolean updateCustomer(Customer customer){
+        String updateCustomerSQL = "UPDATE CUSTOMERS SET CUSTOMER_NAME=?,ADDRESS=?,POSTAL_CODE=?,PHONE=?," +
+                "LAST_UPDATE=NOW(),LAST_UPDATED_BY=?,DIVISION_ID=? " +
+                "WHERE CUSTOMER_ID = ?";
         try{
-            String updateCustomerSQL = "UPDATE CUSTOMERS SET CUSTOMER_NAME=?,ADDRESS=?,POSTAL_CODE=?,PHONE=?," +
-                                       "LAST_UPDATE=NOW(),LAST_UPDATED_BY=?,DIVISION_ID=? " +
-                                       "WHERE CUSTOMER_ID = ?";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(updateCustomerSQL);
             pStatement.setString(1,customer.getName());
             pStatement.setString(2,customer.getAddress());
@@ -170,12 +202,17 @@ public class CustomerDAOImpl implements CustomerDAO{
         return false;
     }
 
+    /**
+     * inserts provided Customer into database
+     * @param customer Customer
+     * @return true if successful
+     */
     @Override
     public boolean createNewCustomer(Customer customer){
+        String createCustomerSQL = "INSERT INTO CUSTOMERS(CUSTOMER_NAME,ADDRESS,POSTAL_CODE,PHONE," +
+                "CREATE_DATE,CREATED_BY,LAST_UPDATE,LAST_UPDATED_BY,DIVISION_ID) " +
+                "VALUES(?,?,?,?,NOW(),?,NOW(),?,?)";
         try{
-            String createCustomerSQL = "INSERT INTO CUSTOMERS(CUSTOMER_NAME,ADDRESS,POSTAL_CODE,PHONE," +
-                                       "CREATE_DATE,CREATED_BY,LAST_UPDATE,LAST_UPDATED_BY,DIVISION_ID) " +
-                                       "VALUES(?,?,?,?,NOW(),?,NOW(),?,?)";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(createCustomerSQL);
             pStatement.setString(1,customer.getName());
             pStatement.setString(2,customer.getAddress());
@@ -194,10 +231,15 @@ public class CustomerDAOImpl implements CustomerDAO{
         return false;
     }
 
+    /**
+     * delete Customer by provided customer ID
+     * @param customerID customer ID
+     * @return true if successful
+     */
     @Override
     public boolean deleteCustomer(int customerID){
+        String deleteCustomerSQL = "DELETE FROM CUSTOMERS WHERE CUSTOMER_ID = ?";
         try{
-            String deleteCustomerSQL = "DELETE FROM CUSTOMERS WHERE CUSTOMER_ID = ?";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(deleteCustomerSQL);
             pStatement.setInt(1,(customerID));
             pStatement.executeUpdate();

@@ -1,6 +1,5 @@
 package DAO;
 
-import controller.Appointments;
 import controller.Login;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,13 +11,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 /**
  * @author BJ Bjostad
  */
 public class AppointmentDAOImpl implements AppointmentDAO {
 
+    /**
+     * retrieve all Appointments from the database
+     * includes contact, user, and customer info
+     * @return ObservableList<Appointment>
+     */
     @Override
     public ObservableList<Appointment> getAllAppointments(){
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
@@ -56,6 +59,12 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         return appointments;
     }
 
+    /**
+     * retrieve all Appointments for provided customer ID from the database
+     * includes contact, user, and customer info
+     * @param custID
+     * @return ObservableList<Appointment>
+     */
     @Override
     public ObservableList<Appointment> getAllCustomerAppointments(int custID){
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
@@ -95,13 +104,19 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         return appointments;
     }
 
+    /**
+     * inserts provided Appointment into database
+     * @param appointment
+     * @return true if successful
+     */
     @Override
     public boolean addAppointment(Appointment appointment){
+
+        String createAppointmentSQL = "INSERT INTO APPOINTMENTS(TITLE,DESCRIPTION,LOCATION,TYPE," +
+                                   "START,END,CREATE_DATE,CREATED_BY,LAST_UPDATE,LAST_UPDATED_BY," +
+                                   "CUSTOMER_ID,USER_ID,CONTACT_ID) " +
+                                   "VALUES(?,?,?,?,?,?,now(),?,now(),?,?,?,?)";
         try{
-            String createAppointmentSQL = "INSERT INTO APPOINTMENTS(TITLE,DESCRIPTION,LOCATION,TYPE," +
-                                       "START,END,CREATE_DATE,CREATED_BY,LAST_UPDATE,LAST_UPDATED_BY," +
-                                       "CUSTOMER_ID,USER_ID,CONTACT_ID) " +
-                                       "VALUES(?,?,?,?,?,?,now(),?,now(),?,?,?,?)";
             PreparedStatement pStatement = DBConnection.getConnection()
                     .prepareStatement(createAppointmentSQL);
             pStatement.setString(1, appointment.getTitle());
@@ -124,13 +139,18 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         return false;
     }
 
+    /**
+     * updates provided Appointment in database
+     * @param appointment
+     * @return true if successful
+     */
     @Override
     public boolean updateAppointment(Appointment appointment) {
+        String updateAppointmentSQL = "UPDATE APPOINTMENTS SET TITLE = ?,DESCRIPTION=?,LOCATION=?," +
+                                      "TYPE=?,START=?, END=?,LAST_UPDATE=NOW(),LAST_UPDATED_BY=?," +
+                                      "CUSTOMER_ID=?, USER_ID=?,CONTACT_ID=? " +
+                                      "WHERE APPOINTMENT_ID = ?";
         try{
-            String updateAppointmentSQL = "UPDATE APPOINTMENTS SET TITLE = ?,DESCRIPTION=?,LOCATION=?," +
-                                          "TYPE=?,START=?, END=?,LAST_UPDATE=NOW(),LAST_UPDATED_BY=?," +
-                                          "CUSTOMER_ID=?, USER_ID=?,CONTACT_ID=? " +
-                                          "WHERE APPOINTMENT_ID = ?";
             PreparedStatement pStatement = DBConnection.getConnection()
                     .prepareStatement(updateAppointmentSQL);
             pStatement.setString(1, appointment.getTitle());
@@ -153,10 +173,15 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         return false;
     }
 
+    /**
+     * deletes provided Appointment from database
+     * @param appointmentID
+     * @return true if successful
+     */
     @Override
     public boolean deleteAppointment(int appointmentID) {
+        String deleteAppointmentSQL = "DELETE FROM APPOINTMENTS WHERE APPOINTMENT_ID = ?";
         try{
-            String deleteAppointmentSQL = "DELETE FROM APPOINTMENTS WHERE APPOINTMENT_ID = ?";
             PreparedStatement pStatement = DBConnection.getConnection()
                     .prepareStatement(deleteAppointmentSQL);
             pStatement.setString(1, String.valueOf(appointmentID));
@@ -168,6 +193,4 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         }
         return false;
     }
-
-
 }

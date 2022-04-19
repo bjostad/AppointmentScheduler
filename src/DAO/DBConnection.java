@@ -25,6 +25,10 @@ public class DBConnection {
         }
     }
 
+    /**
+     * retrieve mySQL database connection for use
+     * @return Connection database connection
+     */
     public static Connection getConnection(){
         return dbConnection;
     }

@@ -4,18 +4,21 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.User;
 
-import javax.xml.transform.Result;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserDAOImpl implements UserDAO {
-
+    /**
+     * get User from data base matching provided username
+     * check for matching password if User is found
+     * @param loginUsername username of login user
+     * @return User
+     */
     @Override
     public User getUser(String loginUsername) {
-        User foundUser;
+        String getUserSQL = "SELECT * FROM users WHERE User_Name = ?";
         try{
-            String getUserSQL = "SELECT * FROM users WHERE User_Name = ?";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getUserSQL);
             pStatement.setString(1,loginUsername);
             ResultSet results = pStatement.executeQuery();
@@ -33,11 +36,15 @@ public class UserDAOImpl implements UserDAO {
         return null;
     }
 
+    /**
+     * get all Users from database
+     * @return ObservableList<User>
+     */
     @Override
     public ObservableList<User> getAllUsers(){
+        ObservableList<User> users = FXCollections.observableArrayList();
+        String getAllUsersSQL = "SELECT * FROM USERS";
         try{
-            ObservableList<User> users = FXCollections.observableArrayList();
-            String getAllUsersSQL = "SELECT * FROM USERS";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getAllUsersSQL);
             ResultSet results = pStatement.executeQuery();
             while(results.next()){
@@ -53,10 +60,15 @@ public class UserDAOImpl implements UserDAO {
         return null;
     }
 
+    /**
+     * get user ID based on provided username
+     * @param userName username
+     * @return int userID
+     */
     @Override
     public int getUserIDFromUserName(String userName){
+        String getUserIDFromUserNameSQL = "SELECT USER_ID FROM USERS WHERE USER_NAME = ?";
         try{
-            String getUserIDFromUserNameSQL = "SELECT USER_ID FROM USERS WHERE USER_NAME = ?";
             PreparedStatement pStatement = DBConnection.getConnection().prepareStatement(getUserIDFromUserNameSQL);
             pStatement.setString(1,userName);
             ResultSet results = pStatement.executeQuery();
