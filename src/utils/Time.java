@@ -3,6 +3,7 @@ package utils;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * @author BJ Bjostad
@@ -14,8 +15,8 @@ public class Time {
      * @return int offset in hours
      */
     public static int offsetTo(String tz){
-        return ZonedDateTime.now(ZoneId.systemDefault()).getHour()
-                - ZonedDateTime.now(ZoneId.of(tz)).getHour();
+        return (int)LocalDateTime.now(ZoneId.systemDefault())
+                .until(LocalDateTime.now(ZoneId.of(tz)),ChronoUnit.HOURS);
     }
 
     /**

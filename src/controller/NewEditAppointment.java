@@ -103,7 +103,7 @@ public class NewEditAppointment implements Initializable {
      */
     private ObservableList<LocalTime> setBusinessHours(){
         ObservableList<LocalTime> businessHours = FXCollections.observableArrayList();
-        LocalTime startHours = LocalTime.of(8,00).minusHours(Time.offsetTo("America/New_York"));
+        LocalTime startHours = LocalTime.of(8,00).minusHours(Time.offsetTo("GMT-05:00"));
         for(int i = 0; i<=56;i++){
             businessHours.add(startHours);
             startHours = startHours.plusMinutes(15);
