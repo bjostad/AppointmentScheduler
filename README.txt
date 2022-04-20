@@ -3,8 +3,8 @@ This application allows for the scheduling of appointments between multiple cont
 
 Author: BJ Bjostad
 Contact: bbjost1@wgu.edu
-Version: 0.9
-Date: 04/18/2022
+Version: 0.9.1
+Date: 04/19/2022
 
 IDE:IntelliJ IDEA 2021.3.3 (Community Edition)
     Build #IC-213.7172.25, built on March 15, 2022

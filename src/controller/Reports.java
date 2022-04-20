@@ -71,6 +71,7 @@ public class Reports implements Initializable {
     }
 
     /**
+     * lambda expression - output each appointment to textarea
      * lambda expression - easily/simply allows filtering of Appointments to only those for specified contact
      *
      * Output schedule of all appointments for the selected contact
@@ -85,8 +86,9 @@ public class Reports implements Initializable {
             matchingAppointments = allAppointments.stream()
                     .filter(a -> a.getContactName().equals(contactComboBox.getValue().toString()))
                     .collect(Collectors.toCollection(FXCollections::observableArrayList));
-            for(Appointment a:matchingAppointments){
-                reportsTextArea.appendText(a.getID()
+            matchingAppointments.forEach(
+                    a -> {
+                        reportsTextArea.appendText(a.getID()
                         +" | "+a.getStart()
                         +" | "+a.getEnd()
                         +" | "+a.getTitle()
@@ -97,7 +99,7 @@ public class Reports implements Initializable {
                         +" | "+a.getCustomerName()
                         +" | "+a.getUserName()
                         +"\n");
-            }
+                    });
         } else {
             Alert.invalidInput("Contact");
         }
